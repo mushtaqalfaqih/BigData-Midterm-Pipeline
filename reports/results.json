@@ -1,0 +1,31 @@
+{
+  "run_id": "dd404ef07d84482e9b6236f185ab53a7",
+  "timestamp": "2026-09-04T22:53:41Z",
+  "input_file": {
+    "name": "orders_sample_10k.csv",
+    "size_mb": 4.17,
+    "engine_used": "python_batch"
+  },
+  "performance": {
+    "elapsed_seconds": 2.926,
+    "throughput_rows_per_sec": 3417.69
+  },
+  "counts": {
+    "rows_read": 10000,
+    "run_raw_count": 10000,
+    "run_valid_count": 8133,
+    "run_corrected_count": 1359,
+    "run_quarantine_count": 508
+  },
+  "upsert_stats": {
+    "upsert_inserted": 9408,
+    "upsert_modified": 84
+  },
+  "consistency_check": {
+    "formula": "run_raw_count == run_valid_count + run_corrected_count + run_quarantine_count",
+    "is_consistent": true,
+    "raw_count": 10000,
+    "classified_sum": 10000,
+    "difference": 0
+  }
+}
