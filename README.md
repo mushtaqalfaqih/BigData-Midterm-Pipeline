@@ -46,7 +46,7 @@ In large-scale data engineering, processing massive, dirty datasets without disc
 * **Safe Quarantine**: Irreparably corrupted records are segregated with actionable error codes.
 * **Idempotent Upserts**: Stable business key (`order_id`) indexing ensures zero duplicated records across subsequent executions.
 * **Strict Mathematical Consistency**: 
-  $$\text{run\_raw\_count} = \text{run\_valid\_count} + \text{run\_corrected\_count} + \text{run\_quarantine\_count}$$
+  $$\text{Raw Count} = \text{Valid Count} + \text{Corrected Count} + \text{Quarantine Count}$$
 
 ---
 
@@ -192,7 +192,7 @@ Records that violate foundational integrity constraints or contain fatal corrupt
 </div>
 
 ### 1. The Mathematical Invariance Rule:
-$$\text{run\_raw\_count} = \text{run\_valid\_count} + \text{run\_corrected\_count} + \text{run\_quarantine\_count}$$
+$$\text{Raw Count} = \text{Valid Count} + \text{Corrected Count} + \text{Quarantine Count}$$
 
 * **Raw Records**: $30,000,000$
 * **Valid**: $24,312,892$

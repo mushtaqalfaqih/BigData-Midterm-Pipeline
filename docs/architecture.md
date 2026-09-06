@@ -95,11 +95,11 @@ The MongoDB instance (`midterm_data_pipeline`) is partitioned into three functio
 
 ### 5.1 The Mathematical Consistency Rule
 Every pipeline execution must satisfy the conservation theorem:
-$$\text{run\_raw\_count} = \text{run\_valid\_count} + \text{run\_corrected\_count} + \text{run\_quarantine\_count}$$
+$$\text{Raw Count} = \text{Valid Count} + \text{Corrected Count} + \text{Quarantine Count}$$
 
 For the 30 Million records run:
 $$30,000,000 = 24,312,892 + 4,217,450 + 1,469,658$$
-$$\text{Difference} = 0 \quad (\text{Consistency: PASSED ✅})$$
+$$\text{Difference} = 0 \quad (\text{Consistency: PASSED})$$
 
 ### 5.2 Idempotent Upsert Mathematical Model
 When processing an order $O_i$, the database operation $f(O_i)$ satisfies:
