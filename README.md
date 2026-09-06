@@ -269,7 +269,7 @@ midterm-data-pipeline/
 ### 2. Installation
 ```powershell
 # Clone the repository
-git clone https://github.com/mshtaqalfqyt840-ai/BigData-Midterm-Pipeline.git
+git clone https://github.com/mushtaqalfaqih/BigData-Midterm-Pipeline.git
 cd BigData-Midterm-Pipeline
 
 # Install dependencies
