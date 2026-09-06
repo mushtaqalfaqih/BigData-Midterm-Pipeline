@@ -42,6 +42,8 @@
 - [Quickstart & Reproducibility Guide](#-quickstart--reproducibility-guide)
 - [Automated Testing & Validation](#-automated-testing--validation)
 - [Known Limitations & Future Work](#-known-limitations--future-work)
+- [Author & Lead Engineer](#-author--lead-engineer)
+- [License & Academic Context](#-license--academic-context)
 
 ---
 
@@ -583,6 +585,23 @@ Being explicit about what this pipeline does *not* yet do is as important as the
 * **Batch-only ingestion**: no streaming/CDC (change-data-capture) path — every run is a full or incremental file load, not a continuous feed.
 * **Manual quarantine reprocessing**: quarantined records retain their raw snapshot and *can* be replayed once a rule is fixed, but there's no automated re-ingestion CLI yet — today that's a manual step.
 * **No CI enforcement today**: the test suite and invariant check exist and pass locally; they aren't yet wired into a merge-gating pipeline (see CI/CD proposal above).
+
+---
+
+## 👨‍💻 Author & Lead Engineer
+
+<div align="left">
+
+### **Mushtaq Alfaqih (مشتاق الفقيه)**
+*Artificial Intelligence & Big Data Engineering — 4th Year Student*  
+*Faculty of Computing & Artificial Intelligence | Al-Razi University*
+
+[![GitHub](https://img.shields.io/badge/GitHub-mushtaqalfaqih-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mushtaqalfaqih)
+[![Email](https://img.shields.io/badge/Email-mushtaq.alfaqih.ai%40gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:mushtaq.alfaqih.ai@gmail.com)
+
+> *"Passionate about Distributed Systems, High-Throughput Big Data Pipelines (Apache Spark, MongoDB), and Scalable AI Architectures."*
+
+</div>
 
 ---
 
