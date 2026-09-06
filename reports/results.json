@@ -1,31 +1,31 @@
 {
-  "run_id": "dd404ef07d84482e9b6236f185ab53a7",
-  "timestamp": "2026-09-04T22:53:41Z",
+  "run_id": "a49919a5c7a847789615ec3194f4b9d7",
+  "timestamp": "2026-09-05T23:30:44Z",
   "input_file": {
-    "name": "orders_sample_10k.csv",
-    "size_mb": 4.17,
-    "engine_used": "python_batch"
+    "name": "orders_huge_mixed_quality.csv",
+    "size_mb": 12650.32,
+    "engine_used": "pyspark"
   },
   "performance": {
-    "elapsed_seconds": 2.926,
-    "throughput_rows_per_sec": 3417.69
+    "elapsed_seconds": 8451.256,
+    "throughput_rows_per_sec": 3549.77
   },
   "counts": {
-    "rows_read": 10000,
-    "run_raw_count": 10000,
-    "run_valid_count": 8133,
-    "run_corrected_count": 1359,
-    "run_quarantine_count": 508
+    "rows_read": 30000000,
+    "run_raw_count": 30000000,
+    "run_valid_count": 24312892,
+    "run_corrected_count": 4217450,
+    "run_quarantine_count": 1469658
   },
   "upsert_stats": {
-    "upsert_inserted": 9408,
-    "upsert_modified": 84
+    "upsert_inserted": 28329268,
+    "upsert_modified": 201074
   },
   "consistency_check": {
     "formula": "run_raw_count == run_valid_count + run_corrected_count + run_quarantine_count",
     "is_consistent": true,
-    "raw_count": 10000,
-    "classified_sum": 10000,
+    "raw_count": 30000000,
+    "classified_sum": 30000000,
     "difference": 0
   }
 }

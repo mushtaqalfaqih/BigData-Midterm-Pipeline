@@ -9,15 +9,20 @@ def create_spark_session():
     # Ensure PySpark workers use the exact same Python executable to avoid "Python worker failed to connect back"
     os.environ["PYSPARK_PYTHON"] = sys.executable
     os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+    os.environ["SPARK_LOCAL_IP"] = "127.0.0.1"
+    os.environ["PYSPARK_PIN_THREAD"] = "true"
     
     spark = (
         SparkSession.builder
-        .master("local[*]")
+        .master("local[2]")
         .appName("BigData_Spark_Loader")
         .config("spark.driver.memory", "8g")
         .config("spark.executor.memory", "8g")
         .config("spark.memory.offHeap.enabled", "true")
         .config("spark.memory.offHeap.size", "2g")
+        .config("spark.local.dir", "M:/spark-temp")
+        .config("spark.network.timeout", "800s")
+        .config("spark.executor.heartbeatInterval", "120s")
         .getOrCreate()
     )
 

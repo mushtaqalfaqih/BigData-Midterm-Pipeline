@@ -1,30 +1,30 @@
 # Pipeline Execution Summary Report
 
-- **Run ID**: `dd404ef07d84482e9b6236f185ab53a7`
-- **Timestamp**: `2026-09-04T22:53:41Z`
-- **Input File**: `orders_sample_10k.csv` (4.17 MB)
-- **Engine Used**: `python_batch`
+- **Run ID**: `a49919a5c7a847789615ec3194f4b9d7`
+- **Timestamp**: `2026-09-05T23:30:44Z`
+- **Input File**: `orders_huge_mixed_quality.csv` (12650.32 MB)
+- **Engine Used**: `pyspark`
 
 ---
 
 ## ⚡ Performance Metrics
-- **Elapsed Time**: `2.926 s`
-- **Throughput**: `3417.69 rows/s`
+- **Elapsed Time**: `8451.256 s`
+- **Throughput**: `3549.77 rows/s`
 
 ---
 
 ## 📊 Classification Statistics
 | Category | Count | Percentage |
 | :--- | :--- | :--- |
-| **Raw Loaded (`run_raw_count`)** | `10,000` | 100.0% |
-| **Valid (`run_valid_count`)** | `8,133` | `81.33%` |
-| **Corrected (`run_corrected_count`)** | `1,359` | `13.59%` |
-| **Quarantine (`run_quarantine_count`)** | `508` | `5.08%` |
+| **Raw Loaded (`run_raw_count`)** | `30,000,000` | 100.0% |
+| **Valid (`run_valid_count`)** | `24,312,892` | `81.04%` |
+| **Corrected (`run_corrected_count`)** | `4,217,450` | `14.06%` |
+| **Quarantine (`run_quarantine_count`)** | `1,469,658` | `4.90%` |
 
 ---
 
 ## 🔒 Consistency Check
 - **Formula**: `run_raw_count == run_valid_count + run_corrected_count + run_quarantine_count`
 - **Status**: `PASSED ✅`
-- **Raw Count**: `10,000`
-- **Classified Sum**: `10,000`
+- **Raw Count**: `30,000,000`
+- **Classified Sum**: `30,000,000`
