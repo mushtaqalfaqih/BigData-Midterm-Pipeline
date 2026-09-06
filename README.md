@@ -19,8 +19,8 @@
   <i>Advanced Engineering Edition — adds execution internals, data-layer design rationale, observability model, and a production-hardening blueprint on top of the original pipeline.</i>
 </p>
 
-*Al-Razi University | Faculty of Computing & Artificial Intelligence | Big Data Course*
-*Supervised by: **Eng. Omar Abusand***
+*Al-Razi University | Faculty of Computing & Artificial Intelligence | Big Data Course*  
+*Author: **Mushtaq Alfaqih*** | *Supervised by: **Eng. Omar Abusand****
 
 </div>
 
@@ -587,5 +587,6 @@ Being explicit about what this pipeline does *not* yet do is as important as the
 ---
 
 ## 📜 License & Academic Context
-Developed as part of the **Big Data Midterm Assignment** at **Al-Razi University**, Department of Artificial Intelligence.
+Developed as part of the **Big Data Midterm Assignment** at **Al-Razi University**, Department of Artificial Intelligence.  
+Author: **Mushtaq Alfaqih** | Supervised by: **Eng. Omar Abusand**  
 All rights reserved © 2026.
