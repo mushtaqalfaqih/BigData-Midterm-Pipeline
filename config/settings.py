@@ -1,4 +1,14 @@
+import os
 from pathlib import Path
+
+# ============================================================
+# Load .env file if python-dotenv is installed (silent if not)
+# ============================================================
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=False)
+except ImportError:
+    pass
 
 
 # ============================================================
@@ -11,7 +21,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
 SAMPLES_DIR = DATA_DIR / "samples"
 
-REPORTS_DIR = PROJECT_ROOT / "reports"
+REPORTS_DIR = Path(os.getenv("REPORTS_DIR", str(PROJECT_ROOT / "reports")))
 
 
 # ============================================================
@@ -40,12 +50,12 @@ BATCH_SIZE = 1000
 
 
 # ============================================================
-# MongoDB
+# MongoDB  (override via env vars or .env file)
 # ============================================================
 
-MONGO_URI = "mongodb://localhost:27017"
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
-MONGO_DATABASE = "midterm_data_pipeline"
+MONGO_DATABASE = os.getenv("MONGO_DATABASE", "midterm_data_pipeline")
 
 RAW_COLLECTION = "orders_raw"
 VALIDATED_COLLECTION = "orders_validated"

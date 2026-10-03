@@ -29,3 +29,11 @@ Thumbs.db
 structure.txt
 الرؤية الذي يجب ان نصل اليها.md
 generate_notebook.py
+
+# Final Project — secrets & dev artefacts (never commit)
+.env
+data/dev/
+.dev_reports/
+
+# Compiled Python cache (accidentally committed in foundation)
+config/__pycache__/

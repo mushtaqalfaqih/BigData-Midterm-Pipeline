@@ -19,6 +19,15 @@ def main():
         default=str(SAMPLE_INPUT_FILE),
         help="Path to the input CSV file (default: data/samples/orders_sample_10k.csv)",
     )
+    parser.add_argument(
+        "--no-reset",
+        action="store_true",
+        default=False,
+        help=(
+            "Skip dropping collections before the run (incremental mode). "
+            "Default behaviour (reset=True) is preserved when this flag is absent."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -28,7 +37,7 @@ def main():
         print(f"Error: Specified input file does not exist: {input_path}")
         sys.exit(1)
 
-    run_elt_pipeline(str(input_path))
+    run_elt_pipeline(str(input_path), reset=not args.no_reset)
 
 
 if __name__ == "__main__":

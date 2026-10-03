@@ -1,7 +1,28 @@
 import os
 import sys
+import tempfile
 from pathlib import Path
 from pyspark.sql import SparkSession
+
+
+def _resolve_spark_local_dir() -> str:
+    """
+    Resolution order for spark.local.dir:
+      1. Environment variable SPARK_LOCAL_DIR
+      2. M:/spark-temp  (if drive M: exists)
+      3. tempfile.gettempdir()/spark-temp
+    Creates the directory if it does not exist.
+    """
+    env_val = os.environ.get("SPARK_LOCAL_DIR", "").strip()
+    if env_val:
+        spark_dir = Path(env_val)
+    elif Path("M:/").exists():
+        spark_dir = Path("M:/spark-temp")
+    else:
+        spark_dir = Path(tempfile.gettempdir()) / "spark-temp"
+
+    spark_dir.mkdir(parents=True, exist_ok=True)
+    return str(spark_dir)
 
 
 def create_spark_session():
@@ -11,7 +32,7 @@ def create_spark_session():
     os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
     os.environ["SPARK_LOCAL_IP"] = "127.0.0.1"
     os.environ["PYSPARK_PIN_THREAD"] = "true"
-    
+
     spark = (
         SparkSession.builder
         .master("local[2]")
@@ -20,7 +41,7 @@ def create_spark_session():
         .config("spark.executor.memory", "8g")
         .config("spark.memory.offHeap.enabled", "true")
         .config("spark.memory.offHeap.size", "2g")
-        .config("spark.local.dir", "M:/spark-temp")
+        .config("spark.local.dir", _resolve_spark_local_dir())
         .config("spark.network.timeout", "800s")
         .config("spark.executor.heartbeatInterval", "120s")
         .getOrCreate()
@@ -32,10 +53,12 @@ def create_spark_session():
     print(f" - Driver Memory : {spark.conf.get('spark.driver.memory')}")
     print(f" - Executor Memory : {spark.conf.get('spark.executor.memory')}")
     print(f" - OffHeap Enabled : {spark.conf.get('spark.memory.offHeap.enabled')}")
+    print(f" - Spark Local Dir : {spark.conf.get('spark.local.dir')}")
     print(f" - CSV Escape Char : '\"' (RFC 4180 Standard)")
     print("-" * 60 + "\n")
 
     return spark
+
 
 def load_csv_with_spark(file_path: str):
     """

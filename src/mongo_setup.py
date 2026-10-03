@@ -9,10 +9,16 @@ from config.settings import (
 )
 
 
-def setup_mongodb():
+def setup_mongodb(reset: bool = True):
     """
     Initialize MongoDB collections and indexes required for the ELT pipeline.
     Enforces Unique Index on order_id in orders_validated to support Idempotent Upserts.
+
+    Args:
+        reset (bool): When True (default) drops and recreates each collection before
+                      creating indexes — same behaviour as the original implementation.
+                      When False skips all drops and only calls create_index (idempotent);
+                      safe for incremental / API-triggered runs.
     """
     client = MongoClient(MONGO_URI)
 
@@ -23,7 +29,8 @@ def setup_mongodb():
         # 1. Raw Collection Indexes
         # ----------------------------------------------------
         raw_col = db[RAW_COLLECTION]
-        raw_col.drop() # Clear dirty state from previous runs
+        if reset:
+            raw_col.drop()  # Clear dirty state from previous runs
 
         raw_col.create_index([("metadata.run_id", 1)], name="idx_run_id")
         raw_col.create_index([("metadata.source_file", 1)], name="idx_source_file")
@@ -33,7 +40,9 @@ def setup_mongodb():
         # 2. Validated Collection Indexes (Unique Index on order_id)
         # ----------------------------------------------------
         val_col = db[VALIDATED_COLLECTION]
-        val_col.drop() # Clear dirty state from previous runs
+        if reset:
+            val_col.drop()  # Clear dirty state from previous runs
+
         val_col.create_index([("order_id", 1)], unique=True, name="idx_val_order_id_unique")
         val_col.create_index([("metadata.run_id", 1)], name="idx_val_run_id")
         val_col.create_index([("quality_status", 1)], name="idx_val_quality_status")
@@ -42,17 +51,20 @@ def setup_mongodb():
         # 3. Quarantine Collection Indexes
         # ----------------------------------------------------
         quar_col = db[QUARANTINE_COLLECTION]
-        quar_col.drop() # Clear dirty state from previous runs
+        if reset:
+            quar_col.drop()  # Clear dirty state from previous runs
 
         quar_col.create_index([("metadata.run_id", 1)], name="idx_quar_run_id")
         quar_col.create_index([("quarantine_reasons", 1)], name="idx_quar_reasons")
 
+        mode_label = "RESET (drop + recreate)" if reset else "INCREMENTAL (index-only)"
         print("=" * 60)
         print("MONGODB SETUP COMPLETED SUCCESSFULLY")
         print("=" * 60)
         print(f"URI         : {MONGO_URI}")
         print(f"Database    : {MONGO_DATABASE}")
         print(f"Collections : {RAW_COLLECTION}, {VALIDATED_COLLECTION}, {QUARANTINE_COLLECTION}")
+        print(f"Mode        : {mode_label}")
         print("=" * 60)
 
     finally:

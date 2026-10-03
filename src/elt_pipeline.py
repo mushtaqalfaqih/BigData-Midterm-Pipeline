@@ -163,14 +163,21 @@ def process_raw_to_validated_and_quarantine(run_id: str) -> Dict[str, Any]:
     }
 
 
-def run_elt_pipeline(file_path: str) -> Dict[str, Any]:
+def run_elt_pipeline(file_path: str, reset: bool = True) -> Dict[str, Any]:
     """
     Execute the complete 6-stage ELT pipeline.
+
+    Args:
+        file_path (str): Path to the input CSV file.
+        reset (bool): Passed through to setup_mongodb(). When True (default) the
+                      collections are dropped and recreated before each run.
+                      When False indexes are ensured without dropping data — safe
+                      for incremental / API-triggered runs.
     """
     start_time = time.perf_counter()
 
     # Ensure MongoDB setup & indexes
-    setup_mongodb()
+    setup_mongodb(reset=reset)
 
     # Stage 1: File Router & Discovery
     router_res = inspect_file(file_path)
