@@ -1,0 +1,157 @@
+[
+  {
+    "query": "customer_orders",
+    "params": {
+      "customer_id": "عميل-0",
+      "limit": 20
+    },
+    "before": {
+      "query_name": "customer_orders",
+      "params": {
+        "customer_id": "عميل-0",
+        "limit": 20
+      },
+      "stage_chain": "COLLSCAN > SORT > PROJECTION_DEFAULT",
+      "index_used": null,
+      "n_returned": 1,
+      "total_keys_examined": 0,
+      "total_docs_examined": 283432,
+      "execution_time_ms": 260,
+      "has_blocking_sort": true
+    },
+    "after": {
+      "query_name": "customer_orders",
+      "params": {
+        "customer_id": "عميل-0",
+        "limit": 20
+      },
+      "stage_chain": "IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT",
+      "index_used": "idx_final_customer_date",
+      "n_returned": 1,
+      "total_keys_examined": 1,
+      "total_docs_examined": 1,
+      "execution_time_ms": 1,
+      "has_blocking_sort": false
+    },
+    "improvement": {
+      "speedup_ratio": 260.0,
+      "docs_examined_reduction_ratio": 283432.0,
+      "eliminated_blocking_sort": true
+    }
+  },
+  {
+    "query": "orders_by_status_period",
+    "params": {
+      "status": "تم التسليم",
+      "to_day": "2025-05-01",
+      "from_day": "2025-04-01",
+      "limit": 20
+    },
+    "before": {
+      "query_name": "orders_by_status_period",
+      "params": {
+        "status": "تم التسليم",
+        "to_day": "2025-05-01",
+        "from_day": "2025-04-01",
+        "limit": 20
+      },
+      "stage_chain": "COLLSCAN > SORT > PROJECTION_DEFAULT",
+      "index_used": null,
+      "n_returned": 20,
+      "total_keys_examined": 0,
+      "total_docs_examined": 283432,
+      "execution_time_ms": 328,
+      "has_blocking_sort": true
+    },
+    "after": {
+      "query_name": "orders_by_status_period",
+      "params": {
+        "status": "تم التسليم",
+        "to_day": "2025-05-01",
+        "from_day": "2025-04-01",
+        "limit": 20
+      },
+      "stage_chain": "IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT",
+      "index_used": "idx_final_status_date",
+      "n_returned": 20,
+      "total_keys_examined": 20,
+      "total_docs_examined": 20,
+      "execution_time_ms": 8,
+      "has_blocking_sort": false
+    },
+    "improvement": {
+      "speedup_ratio": 41.0,
+      "docs_examined_reduction_ratio": 14171.6,
+      "eliminated_blocking_sort": true
+    }
+  },
+  {
+    "query": "corrected_orders_by_rule",
+    "params": {
+      "rule_code": "R1_NORMALIZE_DIGITS",
+      "limit": 20
+    },
+    "before": {
+      "query_name": "corrected_orders_by_rule",
+      "params": {
+        "rule_code": "R1_NORMALIZE_DIGITS",
+        "limit": 20
+      },
+      "stage_chain": "IXSCAN > FETCH > SORT > PROJECTION_DEFAULT",
+      "index_used": "idx_val_quality_status",
+      "n_returned": 20,
+      "total_keys_examined": 42219,
+      "total_docs_examined": 42219,
+      "execution_time_ms": 179,
+      "has_blocking_sort": true
+    },
+    "after": {
+      "query_name": "corrected_orders_by_rule",
+      "params": {
+        "rule_code": "R1_NORMALIZE_DIGITS",
+        "limit": 20
+      },
+      "stage_chain": "IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT",
+      "index_used": "idx_final_order_date",
+      "n_returned": 20,
+      "total_keys_examined": 6890,
+      "total_docs_examined": 6890,
+      "execution_time_ms": 101,
+      "has_blocking_sort": false
+    },
+    "improvement": {
+      "speedup_ratio": 1.77,
+      "docs_examined_reduction_ratio": 6.13,
+      "eliminated_blocking_sort": true
+    }
+  },
+  {
+    "query": "high_value_orders",
+    "params": {
+      "to_day": "2025-05-01",
+      "from_day": "2025-04-01",
+      "min_amount": 655500.0,
+      "limit": 20
+    },
+    "before": null,
+    "after": {
+      "query_name": "high_value_orders",
+      "params": {
+        "to_day": "2025-05-01",
+        "from_day": "2025-04-01",
+        "min_amount": 655500.0,
+        "limit": 20
+      },
+      "stage_chain": "IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT",
+      "index_used": "idx_final_order_date",
+      "n_returned": 20,
+      "total_keys_examined": 155,
+      "total_docs_examined": 155,
+      "execution_time_ms": 1,
+      "has_blocking_sort": false
+    },
+    "improvement": {
+      "note": "Evaluated after indexes: date range is narrowed via IXSCAN before post-filtering with $expr."
+    }
+  }
+]
