@@ -27,18 +27,18 @@
 ---
 
 > [!IMPORTANT]
-> ### 🎯 Fast Instructor Evaluation Guide (دليل التقييم السريع المباشر للأستاذ المشرف)
-> **مرحباً بك يا أستاذنا العزيز (م. عمر أبوسند). تم تصميم وبناء وهيكلة هذا المستودع بحيث يمكنك فحص وتقييم كامل متطلبات المشروع (المشروع النصفي 18 درجة + المشروع النهائي 7 درجات) عملياً ومباشرة في أقل من دقيقتين:**
+> ### 🎯 Project Verification & Quick Evaluation Guide (دليل الفحص والتشغيل السريع للمشروع)
+> **دليل تشغيل وفحص شامل ومباشر لتقييم جميع متطلبات المشروع (المرحلة الأولى والثانية) عملياً في أقل من دقيقتين:**
 > 
 > ```powershell
-> # 1. تثبيت المتطلبات وفحص الاختبارات الآلية (49/49 اختبار ناجح بنسبة 100%):
+> # 1. تثبيت المتطلبات وفحص حزمة الاختبارات المؤتمتة (49/49 اختبار ناجح بنسبة 100%):
 > pip install -r requirements.txt
 > pytest -v
 > 
 > # 2. تشغيل خط الأنابيب واختباره على بيانات جديدة (النموذج ديناميكي بالكامل ولا يعتمد على مسارات أو بيانات ثابتة):
 > python src/main.py --file-path data/samples/orders_sample_10k.csv
 > # أو اختباره بأي ملف CSV ترغب في اختباره:
-> # python src/main.py --file-path "C:\path\to\your_test_file.csv"
+> # python src/main.py --file-path "path/to/any_dataset.csv"
 > 
 > # 3. فحص ومقارنة أداء الفهارس عبر explain("executionStats") قبل وبعد الفهرسة:
 > python -m src.final.explain
@@ -48,17 +48,17 @@
 > # الرابط التفاعلي: http://localhost:8000/docs
 > ```
 > 
-> 📌 **جدول مطابقة متطلبات التقييم بالكود الفعلي داخل المستودع:**
-> | متطلب التقييم الأكاديمي | الملف البرمجي الأساسي في المشروع | الحالة |
+> 📌 **جدول مطابقة المكونات البرمجية بالهيكلية الفنية للمشروع:**
+> | المكون البرمجي والوظيفي | الملف الأساسي في المشروع | الحالة |
 > | :--- | :--- | :---: |
-> | **المشروع النصفي: استيراد وتوجيه هجين (Python/Spark)** | [`src/file_router.py`](src/file_router.py), [`src/spark_loader.py`](src/spark_loader.py) | مكتمل ومختبر ✅ |
-> | **المشروع النصفي: 9 قواعد تنظيف وتدقيق (Audit Trail)** | [`src/quality_rules.py`](src/quality_rules.py) | مكتمل ومختبر ✅ |
-> | **المشروع النصفي: تصنيف وحجر صحي وتحديث متطابق (Idempotent)** | [`src/classification.py`](src/classification.py), [`src/elt_pipeline.py`](src/elt_pipeline.py) | مكتمل ومختبر ✅ |
-> | **المشروع النهائي: استعلامات وفهارس ومقارنة Explain** | [`src/final/queries.py`](src/final/queries.py), [`src/final/indexes.py`](src/final/indexes.py), [`src/final/explain.py`](src/final/explain.py) | مكتمل ومختبر ✅ |
-> | **المشروع النهائي: 5 تقارير تجميع حية (Aggregations)** | [`src/final/aggregations.py`](src/final/aggregations.py) | مكتمل ومختبر ✅ |
-> | **المشروع النهائي: جداول مادية وتحديث تزايدي (Incremental Views)** | [`src/final/views.py`](src/final/views.py) | مكتمل ومختبر ✅ |
-> | **المشروع النهائي: مهام مجدولة وسجل تشغيل (APScheduler & Audit)** | [`src/final/jobs.py`](src/final/jobs.py) | مكتمل ومختبر ✅ |
-> | **المشروع النهائي: واجهة REST API موحدة (10 مسارات FastAPI)** | [`src/final/api.py`](src/final/api.py) | مكتمل ومختبر ✅ |
+> | **خط الأنابيب الهجين (Python Streaming / Apache Spark)** | [`src/file_router.py`](src/file_router.py), [`src/spark_loader.py`](src/spark_loader.py) | مكتمل ومختبر ✅ |
+> | **محرك جودة البيانات: 9 قواعد تنظيف وتدقيق (Audit Trail)** | [`src/quality_rules.py`](src/quality_rules.py) | مكتمل ومختبر ✅ |
+> | **التصنيف والحجر الصحي والتحديث المتطابق (Idempotent Upsert)** | [`src/classification.py`](src/classification.py), [`src/elt_pipeline.py`](src/elt_pipeline.py) | مكتمل ومختبر ✅ |
+> | **الاستعلامات التحليلية والفهارس وتحليل الأداء (Explain Benchmark)** | [`src/final/queries.py`](src/final/queries.py), [`src/final/indexes.py`](src/final/indexes.py), [`src/final/explain.py`](src/final/explain.py) | مكتمل ومختبر ✅ |
+> | **تقارير التجميع الحية (5 Aggregation Pipelines)** | [`src/final/aggregations.py`](src/final/aggregations.py) | مكتمل ومختبر ✅ |
+> | **الجداول المادية والتحديث التزايدي (Incremental Materialized Views)** | [`src/final/views.py`](src/final/views.py) | مكتمل ومختبر ✅ |
+> | **جدولة المهام وسجل التشغيل (APScheduler & Job Runs Audit)** | [`src/final/jobs.py`](src/final/jobs.py) | مكتمل ومختبر ✅ |
+> | **الواجهة البرمجية الموحدة (Unified FastAPI REST API - 10 Routes)** | [`src/final/api.py`](src/final/api.py) | مكتمل ومختبر ✅ |
 
 ---
 
