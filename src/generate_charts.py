@@ -5,7 +5,7 @@ import matplotlib.patches as patches
 import numpy as np
 
 # Set output directory
-OUTPUT_DIR = Path(r"m:\H.W.BigData0v.0.1 - Copy\docs\assets")
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "docs" / "assets"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Styling configuration for modern dark-tech aesthetics

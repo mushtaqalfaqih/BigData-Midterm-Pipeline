@@ -37,3 +37,6 @@ data/dev/
 
 # Compiled Python cache (accidentally committed in foundation)
 config/__pycache__/
+
+# PDFs
+*.pdf

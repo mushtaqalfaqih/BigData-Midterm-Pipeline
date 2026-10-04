@@ -73,8 +73,11 @@ def process_raw_to_validated_and_quarantine(run_id: str) -> Dict[str, Any]:
             validated_doc = {
                 "order_id": cleaned_data.get("order_id"),
                 "customer_id": cleaned_data.get("customer_id"),
+                "customer_name": cleaned_data.get("customer_name"),
                 "order_date": cleaned_data.get("order_date"),
                 "status": cleaned_data.get("status"),
+                "city": cleaned_data.get("city"),
+                "district": cleaned_data.get("district"),
                 "total_amount": cleaned_data.get("total_amount"),
                 "currency": cleaned_data.get("currency"),
                 "payment_method": cleaned_data.get("payment_method"),

@@ -7,27 +7,27 @@ This report provides empirical `explain("executionStats")` benchmarks on the dev
 | Query | Metric | Before Index | After Index | Improvement / Impact |
 | :--- | :--- | :---: | :---: | :---: |
 | **customer_orders** | Stage Chain | `COLLSCAN > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_customer_date` |
-| | Execution Time | **260 ms** | **1 ms** | **260.0x faster** |
-| | Docs Examined | 283,432 | 1 | **283,432.0x reduction** |
+| | Execution Time | **7 ms** | **0 ms** | **7.0x faster** |
+| | Docs Examined | 9,408 | 1 | **9,408.0x reduction** |
 | | Keys Examined | 0 | 1 | Exact B-Tree lookup |
 | | Blocking SORT | Yes ⚠️ | No ✅ | Eliminated ✅ |
 | | | | | |
 | **orders_by_status_period** | Stage Chain | `COLLSCAN > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_status_date` |
-| | Execution Time | **328 ms** | **8 ms** | **41.0x faster** |
-| | Docs Examined | 283,432 | 20 | **14,171.6x reduction** |
+| | Execution Time | **9 ms** | **2 ms** | **4.5x faster** |
+| | Docs Examined | 9,408 | 20 | **470.4x reduction** |
 | | Keys Examined | 0 | 20 | Exact B-Tree lookup |
 | | Blocking SORT | Yes ⚠️ | No ✅ | Eliminated ✅ |
 | | | | | |
-| **corrected_orders_by_rule** | Stage Chain | `IXSCAN > FETCH > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_order_date` |
-| | Execution Time | **179 ms** | **101 ms** | **1.77x faster** |
-| | Docs Examined | 42,219 | 6,890 | **6.13x reduction** |
-| | Keys Examined | 42,219 | 6,890 | Exact B-Tree lookup |
-| | Blocking SORT | Yes ⚠️ | No ✅ | Eliminated ✅ |
+| **corrected_orders_by_rule** | Stage Chain | `IXSCAN > FETCH > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > SORT > PROJECTION_DEFAULT` | Index: `idx_final_correction_rule` |
+| | Execution Time | **12 ms** | **6 ms** | **2.0x faster** |
+| | Docs Examined | 1,478 | 501 | **2.95x reduction** |
+| | Keys Examined | 1,478 | 501 | Exact B-Tree lookup |
+| | Blocking SORT | Yes ⚠️ | Yes ⚠️ | N/A |
 | | | | | |
 | **high_value_orders** | Stage Chain | N/A (Baseline) | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_order_date` |
 | | Execution Time | N/A | **1 ms** | Sub-second with $expr |
-| | Docs Examined | N/A | 155 | Evaluated post-IXSCAN |
-| | Keys Examined | N/A | 155 | Date bound narrowing |
+| | Docs Examined | N/A | 240 | Evaluated post-IXSCAN |
+| | Keys Examined | N/A | 240 | Date bound narrowing |
 | | Blocking SORT | N/A | No ✅ | Direct index scan |
 
 ## 2. In-Depth Analysis per Index
