@@ -676,46 +676,63 @@ graph TD
 
 ---
 
-## 📁 Directory Structure
+## 📁 Comprehensive Repository Directory Structure
 
 ```text
-midterm-data-pipeline/
-├── README.md                  # Comprehensive documentation & visual showcase
-├── requirements.txt           # Project dependencies
-├── create_small_sample.py     # Root CLI for sample creation (Section 6.1)
+BigData-Midterm-Pipeline/
 ├── config/
-│   └── settings.py            # Global configuration parameters & thresholds
-
+│   └── settings.py               # Central environment configuration & thresholds (200MB router, batch sizes)
 ├── data/
-│   ├── raw/                   # Massive production datasets (orders_huge_mixed_quality.csv)
-│   └── samples/               # Verifiable testing samples (orders_sample_10k.csv)
+│   ├── raw/                      # Massive production datasets (orders_huge_mixed_quality.csv - 12.65 GB)
+│   └── samples/                  # Verifiable testing samples (orders_sample_10k.csv - 4.17 MB)
 ├── docs/
-│   ├── architecture.md        # Technical architectural design document
-│   └── assets/                # High-resolution 300-DPI charts & graphics
+│   ├── architecture.md           # Core technical architectural design document
+│   ├── EXPLAIN_REPORT.md         # 7x Query Optimization Benchmark & explain() analysis
+│   ├── explain_results.json      # Raw execution stats before/after indexing
+│   └── assets/                   # High-resolution 300-DPI charts, architecture SVGs & Hero Banner
 ├── reports/
-│   ├── results.json           # Machine-readable pipeline execution report
-│   └── results.md             # Human-readable pipeline execution summary
-├── src/
-│   ├── __init__.py
-│   ├── file_router.py         # Dynamic engine router (Python vs PySpark)
-│   ├── batch_loader.py        # Python generator-based streaming loader
-│   ├── spark_loader.py        # PySpark parallel partition worker loader
-│   ├── quality_rules.py       # 8 Automated data cleansing & audit trail rules
-│   ├── classification.py      # Classification engine (Valid, Corrected, Quarantine)
-│   ├── mongo_setup.py         # MongoDB connection & unique index enforcement
-│   ├── metrics.py             # Performance & mathematical consistency calculator
-│   ├── elt_pipeline.py        # Master pipeline orchestrator
-│   ├── generate_charts.py     # High-DPI visualization generator
-│   ├── create_small_sample.py # Reproducible sample extractor
-│   └── main.py                # Main CLI entry point
-├── tests/
-│   ├── __init__.py
-│   ├── test_cleaning_rules.py # Unit tests for the 8 quality rules
-│   └── test_classification.py # Unit tests for classification & quarantine
-├── screenshots/               # Deployment & UI verification screenshots
+│   ├── results.json              # Standardized 15-KPI execution report with mathematical consistency proof
+│   └── results.md                # Human-readable execution summary & rule trigger distributions
+├── screenshots/                  # Live runtime verification (MongoDB Compass, Spark Web UI port 4040)
 │   ├── mongodb/
 │   └── spark/
-└── .github/workflows/         # (roadmap) CI pipeline definition — see Production Hardening Roadmap
+├── src/                          # ─── CORE PIPELINE ENGINE (PHASE 1: MIDTERM - 18 PTS) ───
+│   ├── __init__.py
+│   ├── main.py                   # Master CLI entry point supporting dynamic --file-path & --no-reset
+│   ├── elt_pipeline.py           # End-to-end ELT pipeline orchestrator
+│   ├── file_router.py            # Dynamic engine routing (Python Batch vs PySpark based on size threshold)
+│   ├── batch_loader.py           # Low-latency generator-based Python batch streaming loader
+│   ├── spark_loader.py           # Distributed PySpark parallel partition loader with foreachPartition
+│   ├── quality_rules.py          # 9 Deterministic cleansing rules & forensic pre/post Audit Trail generator
+│   ├── classification.py         # Tri-state record classifier (VALID, CORRECTED, QUARANTINE)
+│   ├── mongo_setup.py            # MongoDB connection initializer & unique index enforcement
+│   ├── metrics.py                # Performance telemetry, invariant verifier & results report generator
+│   ├── generate_charts.py        # 300-DPI publication chart generator
+│   ├── create_small_sample.py    # Reproducible sample extractor
+│   │
+│   └── final/                    # ─── ADVANCED ANALYTICS & SERVICES (PHASE 2: FINAL - 7 PTS) ───
+│       ├── __init__.py
+│       ├── common.py             # Shared DB connection manager, collection constants & JSON serializers
+│       ├── queries.py            # 5 High-performance analytical queries with runtime dynamic defaults
+│       ├── indexes.py            # Compound, multikey & ESR index creation for zero in-memory sorts
+│       ├── explain.py            # Automated before/after index performance comparator & report generator
+│       ├── aggregations.py       # 5 Live MongoDB Aggregation Pipeline reports (dynamic, zero hardcoding)
+│       ├── views.py              # Incremental partition-refreshed Materialized Views with mv_state
+│       ├── jobs.py               # APScheduler background workers & on-demand execution with job_runs audit
+│       └── api.py                # Unified FastAPI REST API (10 interactive endpoints + Swagger UI)
+├── tests/                        # ─── COMPREHENSIVE TEST SUITE (49/49 PASSING - 100%) ───
+│   ├── __init__.py
+│   ├── test_cleaning_rules.py    # Unit tests for the 9 data cleansing rules
+│   ├── test_classification.py    # Unit tests for classification, triage & quarantine logic
+│   └── final/                    # Phase 2 test suite
+│       ├── __init__.py
+│       ├── test_queries.py       # Query parameter validation & dynamic filter tests
+│       ├── test_aggregations.py  # Aggregation stage verification & dynamic pipeline integrity
+│       ├── test_views.py         # Incremental partition refresh & full refresh logic
+│       ├── test_jobs.py          # Scheduler initialization & immediate run logging to job_runs
+│       └── test_api.py           # FastAPI TestClient endpoint integration tests (10/10 routes)
+├── requirements.txt              # Production dependency specifications
+└── README.md                     # Interactive, enterprise-grade project documentation
 ```
 
 ---
