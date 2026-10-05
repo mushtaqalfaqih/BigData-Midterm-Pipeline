@@ -16,7 +16,7 @@
       "n_returned": 1,
       "total_keys_examined": 0,
       "total_docs_examined": 9408,
-      "execution_time_ms": 18,
+      "execution_time_ms": 9,
       "has_blocking_sort": true
     },
     "after": {
@@ -30,7 +30,7 @@
       "n_returned": 1,
       "total_keys_examined": 1,
       "total_docs_examined": 1,
-      "execution_time_ms": 4,
+      "execution_time_ms": 2,
       "has_blocking_sort": false
     },
     "improvement": {
@@ -60,7 +60,7 @@
       "n_returned": 20,
       "total_keys_examined": 0,
       "total_docs_examined": 9408,
-      "execution_time_ms": 25,
+      "execution_time_ms": 15,
       "has_blocking_sort": true
     },
     "after": {
@@ -76,11 +76,11 @@
       "n_returned": 20,
       "total_keys_examined": 20,
       "total_docs_examined": 20,
-      "execution_time_ms": 7,
+      "execution_time_ms": 4,
       "has_blocking_sort": false
     },
     "improvement": {
-      "speedup_ratio": 3.57,
+      "speedup_ratio": 3.75,
       "docs_examined_reduction_ratio": 470.4,
       "eliminated_blocking_sort": true
     }
@@ -102,7 +102,7 @@
       "n_returned": 20,
       "total_keys_examined": 1349,
       "total_docs_examined": 1349,
-      "execution_time_ms": 11,
+      "execution_time_ms": 6,
       "has_blocking_sort": true
     },
     "after": {
@@ -116,11 +116,11 @@
       "n_returned": 20,
       "total_keys_examined": 501,
       "total_docs_examined": 501,
-      "execution_time_ms": 32,
+      "execution_time_ms": 15,
       "has_blocking_sort": true
     },
     "improvement": {
-      "speedup_ratio": 0.34,
+      "speedup_ratio": 0.4,
       "docs_examined_reduction_ratio": 2.69,
       "eliminated_blocking_sort": false
     }
@@ -130,7 +130,7 @@
     "params": {
       "to_day": "2025-05-01",
       "from_day": "2025-04-01",
-      "min_amount": 688000.0,
+      "min_amount": 608500.0,
       "limit": 20
     },
     "before": null,
@@ -139,15 +139,15 @@
       "params": {
         "to_day": "2025-05-01",
         "from_day": "2025-04-01",
-        "min_amount": 688000.0,
+        "min_amount": 608500.0,
         "limit": 20
       },
       "stage_chain": "IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT",
       "index_used": "idx_final_order_date",
       "n_returned": 20,
-      "total_keys_examined": 202,
-      "total_docs_examined": 202,
-      "execution_time_ms": 4,
+      "total_keys_examined": 168,
+      "total_docs_examined": 168,
+      "execution_time_ms": 3,
       "has_blocking_sort": false
     },
     "improvement": {

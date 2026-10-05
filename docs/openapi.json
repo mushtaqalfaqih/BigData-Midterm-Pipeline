@@ -1,0 +1,501 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Big Data Hybrid Pipeline Unified API",
+    "description": "**Al-Razi University | Big Data Practical Course — Final Project**\n\nUnified REST API providing automated ingestion, indexed analytical queries, live aggregation reports, incrementally refreshed Materialized Views, and background scheduled jobs.",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/dashboard": {
+      "get": {
+        "tags": [
+          "0. Executive Dashboard"
+        ],
+        "summary": "Executive Real-Time Big Data Analytics Dashboard",
+        "description": "Interactive web dashboard featuring live KPI telemetry, vector Chart.js charts, and partition refresh controls.",
+        "operationId": "get_dashboard_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "1. System & Health"
+        ],
+        "summary": "System Health and Status Check",
+        "description": "Checks MongoDB connection, collection document counts, and scheduler status.",
+        "operationId": "get_health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingest": {
+      "post": {
+        "tags": [
+          "2. Data Ingestion"
+        ],
+        "summary": "Trigger Data Ingestion ELT Pipeline",
+        "description": "Executes the hybrid ELT pipeline (Python batch or PySpark), cleaning, classification, and upsert.",
+        "operationId": "post_ingest_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/IngestRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Post Ingest Ingest Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/indexes": {
+      "post": {
+        "tags": [
+          "3. Indexes & Optimization"
+        ],
+        "summary": "Build and Ensure MongoDB Indexes",
+        "description": "Creates dedicated compound and multikey indexes for query acceleration and materialized views.",
+        "operationId": "post_indexes_indexes_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Post Indexes Indexes Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queries": {
+      "get": {
+        "tags": [
+          "4. Analytical Queries"
+        ],
+        "summary": "List Available Analytical Queries",
+        "description": "Returns registry of the 5 standard analytical queries with parameter specifications.",
+        "operationId": "get_queries_queries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Queries Queries Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queries/{name}": {
+      "get": {
+        "tags": [
+          "4. Analytical Queries"
+        ],
+        "summary": "Execute Specific Analytical Query",
+        "description": "Runs analytical query by name with optional query string filters (e.g. limit, customer_id, status).",
+        "operationId": "get_query_by_name_queries__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Query By Name Queries  Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aggregations": {
+      "get": {
+        "tags": [
+          "5. Aggregations & Analytics"
+        ],
+        "summary": "List Available Aggregation Reports",
+        "description": "Returns catalog of pre-configured MongoDB Aggregation Pipeline reports.",
+        "operationId": "get_aggregations_aggregations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Aggregations Aggregations Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aggregations/{name}": {
+      "get": {
+        "tags": [
+          "5. Aggregations & Analytics"
+        ],
+        "summary": "Execute Specific Aggregation Report",
+        "description": "Executes aggregation report by name (e.g. sales_by_city, top_products, top_customers, sales_by_period).",
+        "operationId": "get_aggregation_by_name_aggregations__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Aggregation By Name Aggregations  Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/refresh-mv": {
+      "post": {
+        "tags": [
+          "6. Materialized Views"
+        ],
+        "summary": "Refresh Materialized Views",
+        "description": "Performs incremental partition refresh of daily_sales_summary and top_products_summary (or full refresh if ?full=true).",
+        "operationId": "post_refresh_mv_refresh_mv_post",
+        "parameters": [
+          {
+            "name": "full",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "If True, forces full rebuild of all materialized views instead of incremental partition refresh.",
+              "default": false,
+              "title": "Full"
+            },
+            "description": "If True, forces full rebuild of all materialized views instead of incremental partition refresh."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Post Refresh Mv Refresh Mv Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": [
+          "7. Background Scheduled Jobs"
+        ],
+        "summary": "List Scheduled Jobs and Execution History",
+        "description": "Returns list of registered background jobs, their schedule, and recent audit logs from job_runs.",
+        "operationId": "get_jobs_jobs_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Max audit log entries to return",
+              "default": 20,
+              "title": "Limit"
+            },
+            "description": "Max audit log entries to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Jobs Jobs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{name}/run": {
+      "post": {
+        "tags": [
+          "7. Background Scheduled Jobs"
+        ],
+        "summary": "Trigger Specific Job Immediately",
+        "description": "Triggers on-demand execution of a background job (e.g. refresh_materialized_views or pipeline_consistency_audit) and logs to job_runs.",
+        "operationId": "post_job_run_jobs__name__run_post",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Post Job Run Jobs  Name  Run Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IngestRequest": {
+        "properties": {
+          "file_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Path",
+            "description": "Path to CSV dataset. If omitted, uses default sample in data/samples/.",
+            "example": "data/samples/orders_sample_10k.csv"
+          },
+          "reset": {
+            "type": "boolean",
+            "title": "Reset",
+            "description": "If True, clears collections before loading. Default False preserves history.",
+            "default": false,
+            "example": false
+          }
+        },
+        "type": "object",
+        "title": "IngestRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

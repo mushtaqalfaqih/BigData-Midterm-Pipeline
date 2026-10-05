@@ -41,7 +41,7 @@
 ![Evaluation Time](https://img.shields.io/badge/evaluation%20time-%3C%202%20min-f59e0b?style=for-the-badge)
 ![Quality Rules](https://img.shields.io/badge/quality%20rules-9-0969da?style=for-the-badge)
 ![Aggregation Pipelines](https://img.shields.io/badge/aggregation%20pipelines-5-bf3989?style=for-the-badge)
-![API Routes](https://img.shields.io/badge/API%20routes-10-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![API Routes](https://img.shields.io/badge/API%20routes-11-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Apache Spark](https://img.shields.io/badge/Apache%20Spark-E25A1C?style=flat-square&logo=apachespark&logoColor=white)
@@ -983,10 +983,13 @@ The API exposes 10 standardized endpoints conforming strictly to the university 
 # Start the unified REST API service:
 uvicorn src.final.api:app --reload --port 8000
 ```
-*Interactive Swagger UI is available at: [http://localhost:8000/docs](http://localhost:8000/docs)*
+* 🌐 **Cloud Interactive Swagger Documentation (GitHub Pages)**: [https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/)
+* 💻 **Local Interactive Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+* 📊 **Local Real-Time Analytics Dashboard**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
 
 | Method | Route | Description & Parameters | Example cURL Command |
 | :---: | :--- | :--- | :--- |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/dashboard` | Modern Real-Time Glassmorphic Big Data Analytics & BI Dashboard. | `curl http://localhost:8000/dashboard` |
 | ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/health` | Live system health, DB connection status, and collection document counts. | `curl http://localhost:8000/health` |
 | ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/ingest` | Triggers the automated ELT ingestion pipeline for a new dataset. | `curl -X POST http://localhost:8000/ingest -H "Content-Type: application/json" -d "{}"` |
 | ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/indexes` | Ensures all compound, multikey, and unique indexes exist on MongoDB. | `curl -X POST http://localhost:8000/indexes` |
