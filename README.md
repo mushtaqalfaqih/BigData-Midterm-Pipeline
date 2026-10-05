@@ -26,39 +26,88 @@
 
 ---
 
+<div align="center">
+
+## 🎯 Project Verification & Quick Evaluation Guide
+
+**دليل الفحص والتشغيل السريع للمشروع**
+
+![Tests](https://img.shields.io/badge/tests-49%2F49%20passing-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)
+![Evaluation Time](https://img.shields.io/badge/evaluation%20time-%3C%202%20min-f59e0b?style=for-the-badge)
+![Quality Rules](https://img.shields.io/badge/quality%20rules-9-0969da?style=for-the-badge)
+![Aggregation Pipelines](https://img.shields.io/badge/aggregation%20pipelines-5-bf3989?style=for-the-badge)
+![API Routes](https://img.shields.io/badge/API%20routes-10-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![Apache Spark](https://img.shields.io/badge/Apache%20Spark-E25A1C?style=flat-square&logo=apachespark&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
+![APScheduler](https://img.shields.io/badge/APScheduler-4a5568?style=flat-square)
+![Swagger UI](https://img.shields.io/badge/Swagger%20UI-85EA2D?style=flat-square&logo=swagger&logoColor=black)
+
+</div>
+
 > [!IMPORTANT]
-> ### 🎯 Project Verification & Quick Evaluation Guide (دليل الفحص والتشغيل السريع للمشروع)
 > **دليل تشغيل وفحص شامل ومباشر لتقييم جميع متطلبات المشروع (المرحلة الأولى والثانية) عملياً في أقل من دقيقتين:**
-> 
-> ```powershell
-> # 1. تثبيت المتطلبات وفحص حزمة الاختبارات المؤتمتة (49/49 اختبار ناجح بنسبة 100%):
-> pip install -r requirements.txt
-> pytest -v
-> 
-> # 2. تشغيل خط الأنابيب واختباره على بيانات جديدة (النموذج ديناميكي بالكامل ولا يعتمد على مسارات أو بيانات ثابتة):
-> python src/main.py --file-path data/samples/orders_sample_10k.csv
-> # أو اختباره بأي ملف CSV ترغب في اختباره:
-> # python src/main.py --file-path "path/to/any_dataset.csv"
-> 
-> # 3. فحص ومقارنة أداء الفهارس عبر explain("executionStats") قبل وبعد الفهرسة:
-> python -m src.final.explain
-> 
-> # 4. تشغيل خادم الـ API الموحد وتجربة الواجهة التفاعلية (Swagger UI) لجميع المسارات العشرة:
-> uvicorn src.final.api:app --reload --port 8000
-> # الرابط التفاعلي: http://localhost:8000/docs
-> ```
-> 
-> 📌 **جدول مطابقة المكونات البرمجية بالهيكلية الفنية للمشروع:**
-> | المكون البرمجي والوظيفي | الملف الأساسي في المشروع | الحالة |
-> | :--- | :--- | :---: |
-> | **خط الأنابيب الهجين (Python Streaming / Apache Spark)** | [`src/file_router.py`](src/file_router.py), [`src/spark_loader.py`](src/spark_loader.py) | مكتمل ومختبر ✅ |
-> | **محرك جودة البيانات: 9 قواعد تنظيف وتدقيق (Audit Trail)** | [`src/quality_rules.py`](src/quality_rules.py) | مكتمل ومختبر ✅ |
-> | **التصنيف والحجر الصحي والتحديث المتطابق (Idempotent Upsert)** | [`src/classification.py`](src/classification.py), [`src/elt_pipeline.py`](src/elt_pipeline.py) | مكتمل ومختبر ✅ |
-> | **الاستعلامات التحليلية والفهارس وتحليل الأداء (Explain Benchmark)** | [`src/final/queries.py`](src/final/queries.py), [`src/final/indexes.py`](src/final/indexes.py), [`src/final/explain.py`](src/final/explain.py) | مكتمل ومختبر ✅ |
-> | **تقارير التجميع الحية (5 Aggregation Pipelines)** | [`src/final/aggregations.py`](src/final/aggregations.py) | مكتمل ومختبر ✅ |
-> | **الجداول المادية والتحديث التزايدي (Incremental Materialized Views)** | [`src/final/views.py`](src/final/views.py) | مكتمل ومختبر ✅ |
-> | **جدولة المهام وسجل التشغيل (APScheduler & Job Runs Audit)** | [`src/final/jobs.py`](src/final/jobs.py) | مكتمل ومختبر ✅ |
-> | **الواجهة البرمجية الموحدة (Unified FastAPI REST API - 10 Routes)** | [`src/final/api.py`](src/final/api.py) | مكتمل ومختبر ✅ |
+
+### 1️⃣ تثبيت المتطلبات وفحص حزمة الاختبارات المؤتمتة
+
+49/49 اختبار ناجح بنسبة 100%
+
+```powershell
+pip install -r requirements.txt
+pytest -v
+```
+
+### 2️⃣ تشغيل خط الأنابيب واختباره على بيانات جديدة
+
+النموذج ديناميكي بالكامل ولا يعتمد على مسارات أو بيانات ثابتة
+
+```powershell
+python src/main.py --file-path data/samples/orders_sample_10k.csv
+```
+
+أو اختباره بأي ملف CSV ترغب في اختباره:
+
+```powershell
+python src/main.py --file-path "path/to/any_dataset.csv"
+```
+
+### 3️⃣ فحص ومقارنة أداء الفهارس
+
+عبر <code dir="ltr">explain("executionStats")</code> قبل وبعد الفهرسة:
+
+```powershell
+python -m src.final.explain
+```
+
+### 4️⃣ تشغيل خادم الـ API الموحد
+
+وتجربة الواجهة التفاعلية (Swagger UI) لجميع المسارات العشرة:
+
+```powershell
+uvicorn src.final.api:app --reload --port 8000
+```
+
+🔗 الرابط التفاعلي: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+### 📌 جدول مطابقة المكونات البرمجية بالهيكلية الفنية للمشروع
+
+<div dir="rtl">
+
+| المكون البرمجي والوظيفي | الملف الأساسي في المشروع | الحالة |
+| ---: | ---: | :---: |
+| **خط الأنابيب الهجين**<br><sub dir="ltr">Python Streaming / Apache Spark</sub> | [`src/file_router.py`](src/file_router.py)<br>[`src/spark_loader.py`](src/spark_loader.py) | مكتمل ومختبر ✅ |
+| **محرك جودة البيانات: 9 قواعد تنظيف وتدقيق**<br><sub dir="ltr">Audit Trail</sub> | [`src/quality_rules.py`](src/quality_rules.py) | مكتمل ومختبر ✅ |
+| **التصنيف والحجر الصحي والتحديث المتطابق**<br><sub dir="ltr">Idempotent Upsert</sub> | [`src/classification.py`](src/classification.py)<br>[`src/elt_pipeline.py`](src/elt_pipeline.py) | مكتمل ومختبر ✅ |
+| **الاستعلامات التحليلية والفهارس وتحليل الأداء**<br><sub dir="ltr">Explain Benchmark</sub> | [`src/final/queries.py`](src/final/queries.py)<br>[`src/final/indexes.py`](src/final/indexes.py)<br>[`src/final/explain.py`](src/final/explain.py) | مكتمل ومختبر ✅ |
+| **تقارير التجميع الحية**<br><sub dir="ltr">5 Aggregation Pipelines</sub> | [`src/final/aggregations.py`](src/final/aggregations.py) | مكتمل ومختبر ✅ |
+| **الجداول المادية والتحديث التزايدي**<br><sub dir="ltr">Incremental Materialized Views</sub> | [`src/final/views.py`](src/final/views.py) | مكتمل ومختبر ✅ |
+| **جدولة المهام وسجل التشغيل**<br><sub dir="ltr">APScheduler & Job Runs Audit</sub> | [`src/final/jobs.py`](src/final/jobs.py) | مكتمل ومختبر ✅ |
+| **الواجهة البرمجية الموحدة**<br><sub dir="ltr">Unified FastAPI REST API - 10 Routes</sub> | [`src/final/api.py`](src/final/api.py) | مكتمل ومختبر ✅ |
+
+</div>
 
 ---
 
