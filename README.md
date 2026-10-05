@@ -1134,6 +1134,47 @@ Rather than running expensive re-aggregations over millions of rows on every req
 4. Updates are applied via `replace_one(..., upsert=True)`, leaving all untouched partitions unmodified.
 5. If data has not changed, the refresh completes in **< 70 ms** (`UP_TO_DATE`).
 
+| Refresh Mode | Invocation | Partitions Scanned & Recomputed | Execution Latency | Status Code |
+| :---: | :--- | :---: | :---: | :---: |
+| **Incremental (No Change)** | `POST /refresh-mv?full=false` | 0 (No modified run detected) | **< 70 ms** | `UP_TO_DATE` |
+| **Incremental (New Delta)** | `POST /refresh-mv?full=false` | Only newly touched dates & SKUs | **~120 - 180 ms** | `PARTITION_REFRESHED` |
+| **Full Rebuild** | `POST /refresh-mv?full=true` | 100% of days and catalog SKUs | **~350 - 550 ms** | `FULL_REFRESHED` |
+
+<details>
+<summary><b>🔍 Click to view Real Materialized View Document Schemas in MongoDB</b></summary>
+
+<br>
+
+#### 📅 `daily_sales_summary` Document Schema:
+```json
+{
+  "date": "09-02-2025",
+  "total_sales": 36000.0,
+  "order_count": 2,
+  "avg_order_value": 18000.0,
+  "total_delivery_cost": 10000.0,
+  "status_distribution": {
+    "مرتجع": 1,
+    "تم التسليم": 1
+  },
+  "last_refreshed_at": "2026-10-05T01:00:36Z"
+}
+```
+
+#### 🏆 `top_products_summary` Document Schema:
+```json
+{
+  "sku": "SKU-1007",
+  "product_name": "قرص SSD محمول",
+  "total_quantity": 6150.0,
+  "total_revenue": 678345500.0,
+  "order_count": 3118,
+  "last_refreshed_at": "2026-10-05T01:00:36Z"
+}
+```
+
+</details>
+
 ---
 
 ### ⏰ 5. Background Scheduled Jobs & Audit Trail
