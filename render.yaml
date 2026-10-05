@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bigdata-hybrid-pipeline
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.final.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: MONGO_DATABASE
+        value: midterm_data_pipeline
+      - key: MONGO_URI
+        sync: false
+      - key: SCHEDULER_AUTOSTART
+        value: "true"
