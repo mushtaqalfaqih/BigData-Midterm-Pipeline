@@ -49,6 +49,11 @@
 ![APScheduler](https://img.shields.io/badge/APScheduler-4a5568?style=flat-square)
 ![Swagger UI](https://img.shields.io/badge/Swagger%20UI-85EA2D?style=flat-square&logo=swagger&logoColor=black)
 
+<p align="center" style="margin-top: 10px;">
+  <a href="https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/dashboard.html" target="_blank"><img src="https://img.shields.io/badge/Live_Dashboard-Interactive_Demo-8b5cf6?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Live Dashboard"></a>
+  <a href="https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/" target="_blank"><img src="https://img.shields.io/badge/Interactive_API-Swagger_UI-2563eb?style=for-the-badge&logo=swagger&logoColor=white" alt="Interactive Swagger UI"></a>
+</p>
+
 </div>
 
 > [!IMPORTANT]
@@ -983,9 +988,26 @@ The API exposes 10 standardized endpoints conforming strictly to the university 
 # Start the unified REST API service:
 uvicorn src.final.api:app --reload --port 8000
 ```
-* 🌐 **Cloud Interactive Swagger Documentation (GitHub Pages)**: [https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/)
+* 📊 **Live Interactive Web Dashboard (GitHub Pages)**: [https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/dashboard.html](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/dashboard.html)
+* 🌐 **Interactive OpenAPI / Swagger UI (GitHub Pages)**: [https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/)
 * 💻 **Local Interactive Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
-* 📊 **Local Real-Time Analytics Dashboard**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
+* 📈 **Local Real-Time Analytics Dashboard**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
+
+<div align="center">
+
+### 🖥️ معارض الواجهات التفاعلية الحية (Interactive Visual Dashboards Showcase)
+
+[![Live Analytics Dashboard](screenshots/api/dashboard_ui.png)](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/dashboard.html)  
+*لوحة تحكم مؤشرات الأداء الحية (Dark Glassmorphic BI Dashboard) — انقر على الصورة لفتح الواجهة التفاعلية الحية مباشرة على الويب*
+
+<br>
+
+[![FastAPI Interactive Swagger UI](screenshots/api/fastapi_swagger_ui.png)](https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/)  
+*واجهة فحص وتجربة جميع مسارات الـ API تفاعلياً (Interactive Swagger UI) — انقر على الصورة لتصفح الـ 11 مساراً وتجربة الـ Schemas مباشرة*
+
+</div>
+
+<br>
 
 | Method | Route | Description & Parameters | Example cURL Command |
 | :---: | :--- | :--- | :--- |
