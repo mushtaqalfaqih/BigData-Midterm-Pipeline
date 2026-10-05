@@ -1048,12 +1048,76 @@ Benchmarking was executed via `python -m src.final.explain` and recorded in `doc
 ---
 
 ### 📈 3. Five Dynamic Aggregation Reports
-Implemented in `src/final/aggregations.py` with zero hardcoding:
-- **`sales_by_city`**: Total revenue, order count, and average order value grouped by city.
-- **`top_products`**: Product sales ranking by volume and revenue from exploded items.
-- **`top_customers`**: Highest spending customers ranked by cumulative order amounts.
-- **`sales_by_period`**: Daily sales trend with order volumes and revenue breakdown across time.
-- **`orders_by_status`**: Distribution of order counts and revenue across status and payment methods.
+
+Implemented in [`src/final/aggregations.py`](src/final/aggregations.py) with dynamic type-safe numeric coercion (`num_expr()`), ISO date parsing (`day_expr()`), and zero static hardcoding:
+
+| # | Pipeline Name | Target Collection | Aggregation Stages Used | Business Analytics & KPIs | REST Endpoint |
+| :---: | :--- | :---: | :--- | :--- | :--- |
+| **1** | `sales_by_city` | `orders_validated` | `$match` ➔ `$group` ➔ `$project` ➔ `$sort` ➔ `$limit` | Total revenue, order count, average order value (AOV), and total delivery costs by city. | `GET /aggregations/sales_by_city?limit=10` |
+| **2** | `top_products` | `order_items_flat` | `$match` ➔ `$group` ➔ `$project` ➔ `$sort` ➔ `$limit` | Product ranking by total revenue generated, unit sales volume, and order frequencies. | `GET /aggregations/top_products?limit=10` |
+| **3** | `top_customers` | `orders_validated` | `$match` ➔ `$group` ➔ `$project` ➔ `$sort` ➔ `$limit` | VIP customer segmentation, cumulative lifetime spend, order count, and average spend per order. | `GET /aggregations/top_customers?limit=10` |
+| **4** | `sales_by_period` | `orders_validated` | `$match` ➔ `$group` ➔ `$project` ➔ `$sort` ➔ `$limit` | Daily revenue trends across chronological time series (`YYYY-MM-DD`) with order volume velocity. | `GET /aggregations/sales_by_period?limit=15` |
+| **5** | `orders_by_status` | `orders_validated` | `$match` ➔ `$group` ➔ `$project` ➔ `$sort` | Operational status breakdown (DELIVERED, SHIPPED, CANCELLED) cross-tabulated with payment methods. | `GET /aggregations/orders_by_status` |
+| **Bonus** | `quarantine_summary` | `orders_quarantine` | `$group` ➔ `$project` ➔ `$sort` | Forensic audit distribution across all diagnostic error codes (`CORRUPTED_JSON`, `NEGATIVE_PRICE`, etc.). | `GET /aggregations/quarantine_summary` |
+
+<details>
+<summary><b>🔍 Click to view Sample Live Output Payloads for Top Aggregations</b></summary>
+
+<br>
+
+#### 📊 `top_products` Live Payload:
+```json
+{
+  "aggregation": "top_products",
+  "title": "Top Selling Products",
+  "params_used": { "limit": 2 },
+  "count": 2,
+  "results": [
+    {
+      "product_name": "شاشة سامسونج 55 بوصة 4K",
+      "sku": "PROD-TECH-001",
+      "total_quantity": 3840,
+      "total_revenue": 1420800000.0,
+      "order_appearances": 3210
+    },
+    {
+      "product_name": "لابتوب ديل انسبيرون 15",
+      "sku": "PROD-TECH-002",
+      "total_quantity": 2910,
+      "total_revenue": 1280400000.0,
+      "order_appearances": 2540
+    }
+  ]
+}
+```
+
+#### 👑 `top_customers` Live Payload:
+```json
+{
+  "aggregation": "top_customers",
+  "title": "Top Spending Customers",
+  "params_used": { "limit": 2 },
+  "count": 2,
+  "results": [
+    {
+      "customer_id": "CUST-94812",
+      "customer_name": "أحمد عبدالله الشامي",
+      "order_count": 8,
+      "total_spend": 2840000.0,
+      "avg_order_value": 355000.0
+    },
+    {
+      "customer_id": "CUST-32109",
+      "customer_name": "محمد علي باوزير",
+      "order_count": 7,
+      "total_spend": 2490000.0,
+      "avg_order_value": 355714.28
+    }
+  ]
+}
+```
+
+</details>
 
 ---
 
