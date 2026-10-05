@@ -774,18 +774,89 @@ uvicorn src.final.api:app --reload --port 8000
 ```
 *Interactive Swagger UI is available at: [http://localhost:8000/docs](http://localhost:8000/docs)*
 
-| HTTP Method | Route | Description & Parameters | Example cURL Command |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/health` | Live system health, DB connection status, and collection document counts. | `curl http://localhost:8000/health` |
-| `POST` | `/ingest` | Triggers the automated ELT ingestion pipeline for a new dataset. | `curl -X POST http://localhost:8000/ingest -H "Content-Type: application/json" -d "{}"` |
-| `POST` | `/indexes` | Ensures all compound, multikey, and unique indexes exist on MongoDB. | `curl -X POST http://localhost:8000/indexes` |
-| `GET` | `/queries` | Lists all 5 available analytical queries and their parameter signatures. | `curl http://localhost:8000/queries` |
-| `GET` | `/queries/{name}` | Executes a specific analytical query with query string parameters. | `curl "http://localhost:8000/queries/customer_orders?limit=5"` |
-| `GET` | `/aggregations` | Catalogs all 5 dynamic MongoDB Aggregation Pipeline reports. | `curl http://localhost:8000/aggregations` |
-| `GET` | `/aggregations/{name}` | Runs a live aggregation report (e.g. `sales_by_city`, `top_products`). | `curl "http://localhost:8000/aggregations/sales_by_city?limit=5"` |
-| `POST` | `/refresh-mv` | Triggers incremental partition refresh of Materialized Views (`?full=false`). | `curl -X POST "http://localhost:8000/refresh-mv?full=false"` |
-| `GET` | `/jobs` | Lists scheduled background jobs and recent audit logs from `job_runs`. | `curl http://localhost:8000/jobs` |
-| `POST` | `/jobs/{name}/run` | Triggers immediate on-demand execution of a background job. | `curl -X POST http://localhost:8000/jobs/refresh_materialized_views/run` |
+| Method | Route | Description & Parameters | Example cURL Command |
+| :---: | :--- | :--- | :--- |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/health` | Live system health, DB connection status, and collection document counts. | `curl http://localhost:8000/health` |
+| ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/ingest` | Triggers the automated ELT ingestion pipeline for a new dataset. | `curl -X POST http://localhost:8000/ingest -H "Content-Type: application/json" -d "{}"` |
+| ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/indexes` | Ensures all compound, multikey, and unique indexes exist on MongoDB. | `curl -X POST http://localhost:8000/indexes` |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/queries` | Lists all 5 available analytical queries and their parameter signatures. | `curl http://localhost:8000/queries` |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/queries/{name}` | Executes a specific analytical query with query string parameters. | `curl "http://localhost:8000/queries/customer_orders?limit=5"` |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/aggregations` | Catalogs all 5 dynamic MongoDB Aggregation Pipeline reports. | `curl http://localhost:8000/aggregations` |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/aggregations/{name}` | Runs a live aggregation report (e.g. `sales_by_city`, `top_products`). | `curl "http://localhost:8000/aggregations/sales_by_city?limit=5"` |
+| ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/refresh-mv` | Triggers incremental partition refresh of Materialized Views (`?full=false`). | `curl -X POST "http://localhost:8000/refresh-mv?full=false"` |
+| ![GET](https://img.shields.io/badge/GET-3b82f6?style=flat-square) | `/jobs` | Lists scheduled background jobs and recent audit logs from `job_runs`. | `curl http://localhost:8000/jobs` |
+| ![POST](https://img.shields.io/badge/POST-10b981?style=flat-square) | `/jobs/{name}/run` | Triggers immediate on-demand execution of a background job. | `curl -X POST http://localhost:8000/jobs/refresh_materialized_views/run` |
+
+<details>
+<summary><b>🔍 Click to expand: Live API JSON Response Payloads (نماذج استجابات الـ API الحية)</b></summary>
+
+<br>
+
+#### 1. `GET /health` Sample Payload:
+```json
+{
+  "status": "UP",
+  "timestamp": "2026-10-05T00:15:20Z",
+  "database": {
+    "name": "midterm_data_pipeline",
+    "status": "CONNECTED",
+    "counts": {
+      "orders_raw": 10000,
+      "orders_validated": 9408,
+      "orders_quarantine": 508,
+      "order_items_flat": 18816,
+      "daily_sales_summary": 30,
+      "top_products_summary": 6,
+      "job_runs": 8
+    }
+  },
+  "scheduler": {
+    "status": "RUNNING"
+  }
+}
+```
+
+#### 2. `GET /aggregations/sales_by_city` Sample Payload:
+```json
+{
+  "aggregation": "sales_by_city",
+  "title": "Sales by City",
+  "params_used": { "limit": 2 },
+  "count": 2,
+  "results": [
+    {
+      "city": "تعز",
+      "order_count": 988,
+      "total_revenue": 260307000.0,
+      "avg_order_value": 263468.62,
+      "total_delivery_cost": 3425000.0
+    },
+    {
+      "city": "الحديدة",
+      "order_count": 956,
+      "total_revenue": 256151000.0,
+      "avg_order_value": 267940.38,
+      "total_delivery_cost": 3304000.0
+    }
+  ]
+}
+```
+
+#### 3. `POST /refresh-mv?full=false` Incremental Refresh Payload:
+```json
+{
+  "status": "UP_TO_DATE",
+  "mode": "incremental",
+  "message": "All materialized views are already synchronized.",
+  "affected_days": [],
+  "affected_skus_count": 0,
+  "views_refreshed": [],
+  "elapsed_ms": 68.47,
+  "last_refreshed_at": "2026-10-05T00:13:20Z"
+}
+```
+
+</details>
 
 ---
 
