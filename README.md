@@ -49,7 +49,8 @@
 ![APScheduler](https://img.shields.io/badge/APScheduler-4a5568?style=flat-square)
 ![Swagger UI](https://img.shields.io/badge/Swagger%20UI-85EA2D?style=flat-square&logo=swagger&logoColor=black)
 
-<p align="center" style="margin-top: 10px;">
+<p align="center" style="margin-top: 10px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+  <a href="https://github.com/codespaces/new?repo=mushtaqalfaqih/BigData-Midterm-Pipeline" target="_blank"><img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces"></a>
   <a href="https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/dashboard.html" target="_blank"><img src="https://img.shields.io/badge/Live_Dashboard-Interactive_Demo-8b5cf6?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Live Dashboard"></a>
   <a href="https://mushtaqalfaqih.github.io/BigData-Midterm-Pipeline/" target="_blank"><img src="https://img.shields.io/badge/Interactive_API-Swagger_UI-2563eb?style=for-the-badge&logo=swagger&logoColor=white" alt="Interactive Swagger UI"></a>
 </p>
