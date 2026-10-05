@@ -167,7 +167,7 @@ MongoDB's default replication model is **BASE** (Basically Available, Soft state
 
 | Property | Mechanism | Effect |
 | :--- | :--- | :--- |
-| **Deterministic transforms** | Each of the 8 rules is a pure function: `f(raw_value) → cleaned_value`, no hidden state | Re-running the same raw record always yields the same cleaned record |
+| **Deterministic transforms** | Each of the 9 rules is a pure function: `f(raw_value) → cleaned_value`, no hidden state | Re-running the same raw record always yields the same cleaned record |
 | **Idempotent writes** | `UpdateOne(..., upsert=True)` keyed on unique `order_id` index | Re-running the same batch N times produces the same end state as running it once |
 
 Together, *"pure transform + idempotent upsert"* is the standard substitute for distributed transactions in high-throughput NoSQL pipelines — it trades strict atomicity for horizontal scalability, while still guaranteeing a **reconcilable, auditable end state**.
@@ -210,7 +210,7 @@ flowchart TD
     end
 
     subgraph TF["🧪 Transform & Classify"]
-        TRANS["⚙️ Transformation & Quality Engine<br>(8 Rules + Audit Trail Generator)"]:::process
+        TRANS["⚙️ Transformation & Quality Engine<br>(9 Rules + Audit Trail Generator)"]:::process
         CLASS{"🎯 Quality Classification"}:::process
         VAL1(["VALID"]):::valid
         VAL2(["CORRECTED"]):::warn
@@ -322,7 +322,7 @@ These are the tunable knobs exposed through `config/settings.py` and the Spark s
 
 ### Algorithmic Complexity Notes
 
-Each of the 8 quality rules is applied as a single linear pass per record — $O(n)$ over the dataset per rule, $O(8n)$ total, which is why throughput stays essentially flat between the 10K sample and the 30M full run (3,417 vs. 3,549 rows/sec — the small delta is cluster warm-up/orchestration overhead, not algorithmic growth). The only super-linear cost in the pipeline is the MongoDB unique-index maintenance on upsert, which is $O(\log n)$ per write (B-tree index) — negligible next to the $O(n)$ transformation cost at this scale.
+Each of the 9 quality rules is applied as a single linear pass per record — $O(n)$ over the dataset per rule, $O(9n)$ total, which is why throughput stays essentially flat between the 10K sample and the 30M full run (3,417 vs. 3,549 rows/sec — the small delta is cluster warm-up/orchestration overhead, not algorithmic growth). The only super-linear cost in the pipeline is the MongoDB unique-index maintenance on upsert, which is $O(\log n)$ per write (B-tree index) — negligible next to the $O(n)$ transformation cost at this scale.
 
 ---
 
@@ -427,7 +427,7 @@ The pipeline was stress-tested on the complete **30 Million Records dataset (`or
 
 ---
 
-## 🛠️ 8-Stage Data Quality & Audit Trail Rules
+## 🛠️ 9-Stage Data Quality & Audit Trail Rules
 
 All cleansing operations adhere strictly to **deterministic, non-guessing transformation rules**. Whenever a field is altered, a structured audit log entry is permanently embedded within the record.
 
