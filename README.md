@@ -127,8 +127,9 @@ uvicorn src.final.api:app --reload --port 8000
 - [Classification & Quarantine Engine](#-classification--quarantine-engine)
 - [Guaranteed Idempotency & Mathematical Consistency](#-guaranteed-idempotency--mathematical-consistency)
 - [Academic Midterm Demonstration Walkthrough](#-academic-midterm-demonstration-walkthrough)
-- [Directory Structure](#-directory-structure)
+- [Comprehensive Repository Directory Structure](#-comprehensive-repository-directory-structure)
 - [Quickstart & Reproducibility Guide](#-quickstart--reproducibility-guide)
+- [Evaluator's Verification Cheat-Sheet & FAQ](#-evaluators-verification-cheat-sheet--faq)
 - [Phase 2: Final Project — Unified REST API, Materialized Views & Scheduled Jobs](#-phase-2-final-project--unified-rest-api-materialized-views--scheduled-jobs)
 - [Automated Testing & Validation](#-automated-testing--validation)
 - [Author & Lead Engineer](#-author--lead-engineer)
@@ -775,6 +776,94 @@ python -c "import json; r=json.load(open('reports/results.json')); print('diff =
 ```
 
 ---
+
+## 🔍 Evaluator's Verification Cheat-Sheet & FAQ
+
+> [!TIP]
+> **دليل مخصص للتقييم الأكاديمي المباشر:** تم إعداد هذا القسم لتمكين أستاذ المقرر أو المُقيّم من اختبار وفحص جميع مكونات ومخرجات المشروع (المرحلة الأولى والمرحلة الثانية) بأوامر تشغيل فورية ومباشرة بنقرة واحدة:
+
+<div dir="rtl">
+
+### 📋 مسرد الأسئلة الشائعة وأوامر الفحص السريع:
+
+<details open>
+<summary><b>1️⃣ كيف أقوم بتشغيل وفحص حزمة الاختبارات الشاملة (49/49 اختبار)؟</b></summary>
+
+```powershell
+python -m pytest -v
+```
+* **النتيجة**: اجتياز 49 من أصل 49 اختبار بنسبة 100% في غضون ثوانٍ معدودة، تشمل اختبارات قواعد الجودة الـ 9، وتصنيف الحجر الصحي، والاستعلامات التحليلية، والفهارس، والتجميعات، والجداول المادية، والمهام المجدولة، ومسارات الـ API العشرة.
+</details>
+
+<details open>
+<summary><b>2️⃣ كيف يمكن اختبار خط الأنابيب على مجموعة بيانات جديدة كلياً (Unseen Dataset)؟</b></summary>
+
+خط الأنابيب ديناميكي بالكامل ولا يعتمد على قيم أو مسارات ثابتة:
+```powershell
+# لاختبار عينة الـ 10K المضمنة بالمستودع:
+python src/main.py --file-path data/samples/orders_sample_10k.csv
+
+# أو لاختبار أي ملف CSV خارجي جديد تماماً:
+python src/main.py --file-path "path/to/any_dataset.csv"
+```
+* يقوم موجه الملفات (`src/file_router.py`) تلقائياً بفحص الحجم واختيار محرك الدفعات (`python_batch`) للملفات $\le 200\text{ MB}$، أو معالجة PySpark الموزعة للملفات الأكبر.
+</details>
+
+<details open>
+<summary><b>3️⃣ كيف أتحقق برمجياً من معادلة التماسك الرياضي وعدم فقدان أي سجل (Zero Data Loss)؟</b></summary>
+
+تشغيل أمر التحقق الرياضي المباشر على مخرجات ملف التقرير المعتمد:
+```powershell
+python -c "import json; r=json.load(open('reports/results.json')); raw=r['raw_count']; acc=r['valid_count']+r['corrected_count']+r['quarantine_count']; diff=raw-acc; print(f'Raw: {raw} | Accounted: {acc} | Discrepancy: {diff} (PASSED={diff==0})')"
+```
+* **النتيجة الحتمية**: `Discrepancy: 0 (PASSED=True)`. كل سجل دخل النظام تم حسابه بالكامل إما كـ `VALID` أو تم تصحيحه وتوثيقه كـ `CORRECTED` أو تم عزله كـ `QUARANTINE` مع كود الخطأ الدقيق.
+</details>
+
+<details open>
+<summary><b>4️⃣ كيف أتأكد من كفاءة الفهارس المركبة وتسريع الاستعلامات عملياً؟</b></summary>
+
+تشغيل أداة المقارنة التلقائية التي تستخدم <code dir="ltr">explain("executionStats")</code>:
+```powershell
+python -m src.final.explain
+```
+* تقيس الأداة الأداء قبل الفهرسة (Scan كامل وفرز بالذاكرة `SORT`)، ثم تنشئ الفهارس وتعيد القياس لتوثيق التسريع الفعلي (حتى 7 أضعاف) وتكتب التقرير في [`docs/EXPLAIN_REPORT.md`](docs/EXPLAIN_REPORT.md).
+</details>
+
+<details open>
+<summary><b>5️⃣ كيف أقوم بتشغيل واجهة الـ API التفاعلية (FastAPI Swagger UI)؟</b></summary>
+
+```powershell
+uvicorn src.final.api:app --reload --port 8000
+```
+* افتح المتصفح مباشرة على: [http://localhost:8000/docs](http://localhost:8000/docs) لتجربة المسارات العشرة تفاعلياً.
+</details>
+
+<details open>
+<summary><b>6️⃣ كيف أختبر التحديث التزايدي الذكي للجداول المادية (Incremental Partition Refresh)؟</b></summary>
+
+```powershell
+# تحديث تزايدي (يعيد حساب الأيام والمنتجات المتأثرة فقط):
+curl -X POST "http://localhost:8000/refresh-mv?full=false"
+
+# تحديث كلي شامل (Full Rebuild):
+curl -X POST "http://localhost:8000/refresh-mv?full=true"
+```
+* إذا لم تكن هناك بيانات جديدة مدخلة، تكتمل العملية التزايدية في أقل من **70 مللي ثانية** بحالة `UP_TO_DATE`.
+</details>
+
+<details open>
+<summary><b>7️⃣ كيف أتحقق من تشغيل المهام المجدولة وسجل التدقيق في قاعدة البيانات؟</b></summary>
+
+```powershell
+# تشغيل مهمة التدقيق الفوري بطلب مباشر:
+curl -X POST http://localhost:8000/jobs/pipeline_consistency_audit/run
+
+# فحص سجل العمليات في MongoDB للتأكد من توثيق العملية وحالتها:
+python -c "from pymongo import MongoClient; import json; col=MongoClient()['midterm_data_pipeline']['job_runs']; print(json.dumps([doc for doc in col.find({}, {'_id':0}).sort('started_at',-1).limit(1)], indent=2, ensure_ascii=False))"
+```
+</details>
+
+</div>
 
 ---
 
