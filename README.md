@@ -9,6 +9,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Apache Spark](https://img.shields.io/badge/Apache%20Spark-3.5%2B-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)](https://spark.apache.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![CI Pipeline](https://github.com/mushtaqalfaqih/BigData-Midterm-Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/mushtaqalfaqih/BigData-Midterm-Pipeline/actions)
 [![Volume](https://img.shields.io/badge/Processed%20Volume-30M%20Records%20(13GB)-blueviolet?style=for-the-badge&logo=databricks&logoColor=white)](#-performance-benchmarks--kpi-dashboard)
 [![Tests](https://img.shields.io/badge/Unit%20Tests-49%2F49%20Passing%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](#-automated-testing--validation)
 [![Architecture](https://img.shields.io/badge/Pattern-Pure%20ELT%20%2B%20Idempotent%20Upsert-blue?style=for-the-badge)](#-end-to-end-architecture)
@@ -390,6 +391,19 @@ Monitors the multi-threaded distributed processing engine across the 12.65 GB wo
 * **Engine Configuration**: Master `local[2]` with `8 GB` driver RAM, `8 GB` executor RAM, and `2 GB` off-heap memory.
 * **Parallel Partitions**: The dataset is divided into **96 parallel partitions** (~132 MB each), avoiding JVM memory exhaustion.
 * **Worker Execution (Stage 1 DAG)**: Uses `foreachPartition` to stream bulk writes directly into MongoDB with zero unnecessary shuffle spills.
+
+<br>
+
+### 3. 🌐 FastAPI Interactive OpenAPI / Swagger UI Dashboard (Port 8000)
+Exposes the 10 unified enterprise endpoints for ingestion, query execution, live aggregations, view refreshes, and scheduled background workers:
+
+<div align="center">
+  <img src="screenshots/api/fastapi_swagger_ui.png" alt="FastAPI Swagger UI Dashboard" width="95%"/>
+</div>
+
+* **OpenAPI 3.1 Specification**: Fully compliant schema with typed parameters, request validation, and interactive execution.
+* **10 Unified Endpoints**: Covers system health, dynamic ingestion triggers, index enforcement, 5 analytical queries, 5 aggregation reports, incremental materialized view synchronization, and background job execution.
+* **Self-Documenting Architecture**: Accessible locally via [http://localhost:8000/docs](http://localhost:8000/docs) with zero manual API documentation overhead.
 
 ---
 
@@ -1029,11 +1043,16 @@ uvicorn src.final.api:app --reload --port 8000
 
 ### 📊 2. Analytical Queries & Index Optimization (`explain("executionStats")`)
 5 specialized queries were engineered with runtime dynamic parameter resolution to ensure zero failure on unseen test datasets:
-1. `customer_orders`: ESR-optimized lookup of orders for a specific customer sorted by date descending.
-2. `orders_by_status_period`: Bounded status search with descending date index bounds.
-3. `high_value_orders`: Gated B-Tree date scan followed by `$expr` numeric threshold comparison.
-4. `corrected_orders_by_rule`: Multikey array index scan on `corrections.rule_code`.
-5. `quarantine_by_reason`: Diagnostic isolation query on `orders_quarantine`.
+
+#### 🏛️ ESR (Equality, Sort, Range) Index Architecture Matrix:
+
+| Query Identifier | Collection | Filter Predicates | Sort Key | Associated MongoDB Index | ESR Design & Algorithmic Strategy |
+| :--- | :---: | :--- | :--- | :--- | :--- |
+| **`customer_orders`** | `orders_validated` | `customer_id` (Equality) | `order_date: -1` | `idx_final_customer_date`<br>`{customer_id: 1, order_date: -1}` | **E ➔ S**: Exact key seek followed by ordered index traversal. Zero in-memory `SORT` stage. |
+| **`orders_by_status_period`** | `orders_validated` | `status` (Equality), `order_date` (Range) | `order_date: -1` | `idx_final_status_date`<br>`{status: 1, order_date: -1}` | **E ➔ S ➔ R**: Filter by status, traverse index in descending date order to satisfy sort and range bounds. |
+| **`high_value_orders`** | `orders_validated` | `order_date` (Range), `total_amount` ($expr) | `order_date: -1` | `idx_final_order_date`<br>`{order_date: 1}` | **R**: B-Tree date bounds seek limits scanned documents before applying `$expr` numeric comparison. |
+| **`corrected_orders_by_rule`** | `orders_validated` | `corrections.rule_code` (Multikey Equality) | `order_date: -1` | `idx_final_correction_rule`<br>`{corrections.rule_code: 1}` | **Multikey Index**: Direct array traversal index into nested audit corrections. |
+| **`quarantine_by_reason`** | `orders_quarantine` | `quarantine_reasons` (Multikey Equality) | `created_at: -1` | `idx_quar_reasons`<br>`{quarantine_reasons: 1}` | **Multikey Index**: Fast triage of defective rows by specific forensic error code. |
 
 #### ⚡ Performance Benchmark (Before vs After Indexing):
 Benchmarking was executed via `python -m src.final.explain` and recorded in `docs/EXPLAIN_REPORT.md`:
@@ -1281,7 +1300,7 @@ Being explicit about what this pipeline does *not* yet do is as important as the
 * **Single-node MongoDB**: no sharding or replica set yet — durability and horizontal write scale beyond the current 30M-row target would need the replica-set work noted in the roadmap.
 * **Batch-only ingestion**: no streaming/CDC (change-data-capture) path — every run is a full or incremental file load, not a continuous feed.
 * **Manual quarantine reprocessing**: quarantined records retain their raw snapshot and *can* be replayed once a rule is fixed, but there's no automated re-ingestion CLI yet — today that's a manual step.
-* **No CI enforcement today**: the test suite and invariant check exist and pass locally; they aren't yet wired into a merge-gating pipeline (see CI/CD proposal above).
+* **Automated CI/CD**: Wired into a robust GitHub Actions workflow (`.github/workflows/ci.yml`) that validates the 10K dataset ingestion, query explain benchmark, all 49 unit tests, and the strict zero-data-loss invariant check on every push and pull request.
 
 ---
 

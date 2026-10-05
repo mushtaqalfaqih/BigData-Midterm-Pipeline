@@ -1,0 +1,60 @@
+name: CI & Invariant Quality Verification
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-verify:
+    name: Run Quality Rules & 49 Unit Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK 17 (for PySpark)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Project Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Execute Pipeline on Sample 10K Dataset
+        run: |
+          python src/main.py --file-path data/samples/orders_sample_10k.csv
+
+      - name: Run Query Index Optimization Benchmark
+        run: |
+          python -m src.final.explain
+
+      - name: Run Complete 49-Test Automated Suite
+        run: |
+          python -m pytest -v
+
+      - name: Verify Strict Zero Data Loss Invariant
+        run: |
+          python -c "import json; r=json.load(open('reports/results.json')); raw=r['raw_count']; acc=r['valid_count']+r['corrected_count']+r['quarantine_count']; diff=raw-acc; print(f'Verification Report: Raw={raw}, Accounted={acc}, Diff={diff}'); assert diff == 0, f'Strict invariant check failed! Difference is {diff}'; print('✅ MATHEMATICAL INVARIANT PASSED: ZERO DATA LOSS GUARANTEED!')"
