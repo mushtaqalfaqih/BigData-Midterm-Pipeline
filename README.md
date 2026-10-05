@@ -2,6 +2,10 @@
 
 <div align="center">
 
+<p align="center">
+  <img src="docs/assets/project_hero_banner.svg" alt="Enterprise Big Data Hybrid ELT Pipeline" width="100%"/>
+</p>
+
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Apache Spark](https://img.shields.io/badge/Apache%20Spark-3.5%2B-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white)](https://spark.apache.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
