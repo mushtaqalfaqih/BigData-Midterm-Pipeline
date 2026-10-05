@@ -871,6 +871,67 @@ python -c "from pymongo import MongoClient; import json; col=MongoClient()['midt
 
 In Phase 2 (7 Marks), the system was extended from a standalone ingestion pipeline into an **Enterprise Analytical Data Platform** featuring high-performance query acceleration, automated background scheduling, incremental Materialized Views, and an interactive **Unified FastAPI REST API** with automatic Swagger UI documentation.
 
+```mermaid
+flowchart TD
+    classDef storage fill:#1F2937,stroke:#4B5563,stroke-width:2px,color:#F9FAFB;
+    classDef index fill:#312E81,stroke:#6366F1,stroke-width:2px,color:#EEF2FF;
+    classDef views fill:#064E3B,stroke:#10B981,stroke-width:2px,color:#ECFDF5;
+    classDef scheduler fill:#78350F,stroke:#F59E0B,stroke-width:2px,color:#FEF3C7;
+    classDef api fill:#065F46,stroke:#10B981,stroke-width:2px,color:#ECFDF5;
+
+    subgraph DB["🗄️ Curated Database Layer (MongoDB)"]
+        OVAL[("✅ orders_validated<br>(Clean Business Data)")]:::storage
+        ORAW[("📥 orders_raw<br>(Verbatim Ingested)")]:::storage
+        OQUAR[("⛔ orders_quarantine<br>(Defective / Audited)")]:::storage
+    end
+
+    subgraph IDX["⚡ High-Performance Index Layer"]
+        IX1["Compound Index<br>customer_id + order_date (ESR)"]:::index
+        IX2["Multikey Array Index<br>corrections.rule_code"]:::index
+        IX3["Status & Date Index<br>status + order_date"]:::index
+    end
+
+    subgraph MV["🔄 Incremental Materialized Views Engine"]
+        MVS[("State Tracker<br>mv_state")]:::storage
+        V1[("📊 daily_sales_summary<br>(Day Partitions)")]:::views
+        V2[("🏆 top_products_summary<br>(SKU Partitions)")]:::views
+        V3[("📑 order_items_flat<br>(Exploded Items)")]:::views
+    end
+
+    subgraph JOBS["⏰ Automated Scheduling & Audit"]
+        SCHED{"⏱️ APScheduler Background Worker"}:::scheduler
+        J1["Job 1: refresh_materialized_views<br>(Every 15 min)"]:::scheduler
+        J2["Job 2: pipeline_consistency_audit<br>(Every 30 min)"]:::scheduler
+        AUDIT[("📋 job_runs Collection<br>(Audited Runs & Duration)")]:::storage
+    end
+
+    subgraph GATEWAY["🌐 Unified API Gateway (FastAPI)"]
+        API["FastAPI App (uvicorn)<br>Swagger UI at /docs"]:::api
+        R1["Health & Docs<br>/health, /docs"]:::api
+        R2["Analytical Queries (5)<br>/queries, /queries/{name}"]:::api
+        R3["Dynamic Aggregations (5)<br>/aggregations/{name}"]:::api
+        R4["Materialized Views<br>/refresh-mv?full=false"]:::api
+        R5["Background Jobs<br>/jobs, /jobs/{name}/run"]:::api
+    end
+
+    %% Relationships
+    OVAL --> IX1 & IX2 & IX3
+    OVAL --> MVS
+    MVS -->|Only Modified Dates/SKUs| V1 & V2 & V3
+    SCHED --> J1 & J2
+    J1 -->|Trigger Incremental Sync| MVS
+    J2 -->|Verify Raw = Valid + Corr + Quar| DB
+    J1 & J2 -. Log Run Details .-> AUDIT
+
+    API --> R1 & R2 & R3 & R4 & R5
+    R2 --> IDX
+    R3 --> OVAL
+    R4 --> MVS
+    R5 --> SCHED
+```
+
+---
+
 ### 🌐 1. Unified REST API (FastAPI + Swagger UI)
 The API exposes 10 standardized endpoints conforming strictly to the university specification:
 
