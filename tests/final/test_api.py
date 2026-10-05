@@ -134,3 +134,11 @@ def test_api_openapi_json():
     assert "/refresh-mv" in schema["paths"]
     assert "/jobs" in schema["paths"]
     assert "/jobs/{name}/run" in schema["paths"]
+
+
+def test_api_dashboard_endpoint():
+    resp = client.get("/dashboard")
+    assert resp.status_code == 200
+    assert "text/html" in resp.headers.get("content-type", "")
+    assert "Chart.js" in resp.text
+

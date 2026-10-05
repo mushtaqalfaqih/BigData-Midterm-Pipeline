@@ -23,8 +23,10 @@ from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel, Field
+
+from src.final.dashboard import get_dashboard_html
 
 from config.settings import (
     MONGO_DATABASE,
@@ -124,13 +126,25 @@ class IngestRequest(BaseModel):
 
 
 # ============================================================
-# Root Redirect to Swagger Documentation
+# 0. Live Analytics Web Dashboard & Root Navigation
 # ============================================================
 
 @app.get("/", include_in_schema=False)
 def root_redirect() -> RedirectResponse:
-    """Redirects base URL to interactive Swagger UI documentation."""
-    return RedirectResponse(url="/docs")
+    """Redirects base URL to the interactive executive analytics dashboard."""
+    return RedirectResponse(url="/dashboard")
+
+
+@app.get(
+    "/dashboard",
+    response_class=HTMLResponse,
+    tags=["0. Executive Dashboard"],
+    summary="Executive Real-Time Big Data Analytics Dashboard",
+    description="Interactive web dashboard featuring live KPI telemetry, vector Chart.js charts, and partition refresh controls.",
+)
+def get_dashboard() -> HTMLResponse:
+    """Renders modern dark-mode Glassmorphic real-time analytics dashboard."""
+    return HTMLResponse(content=get_dashboard_html(), status_code=200)
 
 
 # ============================================================

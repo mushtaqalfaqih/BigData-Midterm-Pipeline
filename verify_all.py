@@ -177,10 +177,10 @@ def step_5_materialized_views() -> bool:
 
 
 def step_6_automated_tests() -> bool:
-    print_step(6, 6, "Complete 49-Test Automated Suite (pytest)")
+    print_step(6, 6, "Complete 50-Test Automated Suite (pytest)")
     code, out, err = run_cmd([sys.executable, "-m", "pytest", "-q"], timeout=90)
     if code == 0:
-        print_status(True, "49/49 unit tests passed with 100% success rate.")
+        print_status(True, "50/50 unit tests passed with 100% success rate.")
         return True
     else:
         print_status(False, f"pytest reported failures:\n{out}\n{err}")

@@ -1,14 +1,14 @@
 {
-  "run_id": "df75819981d44806ab34609e5c3bc7ff",
-  "timestamp": "2026-10-05T01:45:19Z",
+  "run_id": "6f69ac70d2114bef95267e4e44678e33",
+  "timestamp": "2026-10-05T02:14:23Z",
   "input_file": {
     "name": "orders_sample_10k.csv",
     "size_mb": 4.17,
     "engine_used": "python_batch"
   },
   "performance": {
-    "elapsed_seconds": 4.804,
-    "throughput_rows_per_sec": 2081.59
+    "elapsed_seconds": 7.8,
+    "throughput_rows_per_sec": 1282.08
   },
   "counts": {
     "rows_read": 10000,

@@ -11,7 +11,7 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![CI Pipeline](https://github.com/mushtaqalfaqih/BigData-Midterm-Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/mushtaqalfaqih/BigData-Midterm-Pipeline/actions)
 [![Volume](https://img.shields.io/badge/Processed%20Volume-30M%20Records%20(13GB)-blueviolet?style=for-the-badge&logo=databricks&logoColor=white)](#-performance-benchmarks--kpi-dashboard)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-49%2F49%20Passing%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](#-automated-testing--validation)
+[![Tests](https://img.shields.io/badge/Unit%20Tests-50%2F50%20Passing%20(100%25)-success?style=for-the-badge&logo=pytest&logoColor=white)](#-automated-testing--validation)
 [![Architecture](https://img.shields.io/badge/Pattern-Pure%20ELT%20%2B%20Idempotent%20Upsert-blue?style=for-the-badge)](#-end-to-end-architecture)
 [![Consistency](https://img.shields.io/badge/Invariant%20Check-PASSED%20(Diff%3A%200)-brightgreen?style=for-the-badge)](#-guaranteed-idempotency--mathematical-consistency)
 [![License](https://img.shields.io/badge/License-Academic%20Use-lightgrey?style=for-the-badge)](#-license--academic-context)
@@ -37,7 +37,7 @@
 
 **دليل الفحص والتشغيل السريع للمشروع**
 
-![Tests](https://img.shields.io/badge/tests-49%2F49%20passing-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-50%2F50%20passing-2ea44f?style=for-the-badge&logo=pytest&logoColor=white)
 ![Evaluation Time](https://img.shields.io/badge/evaluation%20time-%3C%202%20min-f59e0b?style=for-the-badge)
 ![Quality Rules](https://img.shields.io/badge/quality%20rules-9-0969da?style=for-the-badge)
 ![Aggregation Pipelines](https://img.shields.io/badge/aggregation%20pipelines-5-bf3989?style=for-the-badge)
@@ -66,7 +66,7 @@ python verify_all.py
 
 ### 1️⃣ تثبيت المتطلبات وفحص حزمة الاختبارات المؤتمتة
 
-49/49 اختبار ناجح بنسبة 100%
+50/50 اختبار ناجح بنسبة 100%
 
 ```powershell
 pip install -r requirements.txt
@@ -414,6 +414,20 @@ Exposes the 10 unified enterprise endpoints for ingestion, query execution, live
 * **OpenAPI 3.1 Specification**: Fully compliant schema with typed parameters, request validation, and interactive execution.
 * **10 Unified Endpoints**: Covers system health, dynamic ingestion triggers, index enforcement, 5 analytical queries, 5 aggregation reports, incremental materialized view synchronization, and background job execution.
 * **Self-Documenting Architecture**: Accessible locally via [http://localhost:8000/docs](http://localhost:8000/docs) with zero manual API documentation overhead.
+
+<br>
+
+### 4. 📊 Live Real-Time Analytics & BI Web Dashboard (Port 8000 /dashboard)
+Provides an executive Single-Page Application (SPA) dashboard displaying real-time telemetry, dynamic Chart.js visualizations, and live partition refresh controls directly in the browser:
+
+<div align="center">
+  <img src="screenshots/api/dashboard_ui.png" alt="Executive Real-Time Big Data Analytics Dashboard" width="95%"/>
+</div>
+
+* **Live Reactive Telemetry**: Real-time KPI counters dynamically tracking `orders_raw`, `orders_validated`, `orders_quarantine`, `order_items_flat`, and background `job_runs`.
+* **Dynamic Chart.js Visualizations**: Interactive dual-axis charts for city revenues and order counts, operational status donut distribution, and daily sales velocity.
+* **In-Browser Partition Refresh**: Instant on-demand execution of `POST /refresh-mv` and `POST /jobs/.../run` with live toast response times.
+* **Instant Access**: Served automatically at [http://localhost:8000/dashboard](http://localhost:8000/dashboard) (or via root redirect [http://localhost:8000](http://localhost:8000)).
 
 ---
 
@@ -1270,40 +1284,41 @@ tests/final/test_api.py::test_api_list_jobs PASSED                       [ 34%]
 tests/final/test_api.py::test_api_run_job_on_demand_success PASSED      [ 36%]
 tests/final/test_api.py::test_api_run_job_on_demand_not_found PASSED    [ 38%]
 tests/final/test_api.py::test_api_openapi_json PASSED                    [ 40%]
-tests/final/test_jobs.py::test_list_registered_jobs PASSED               [ 42%]
-tests/final/test_jobs.py::test_run_refresh_materialized_views_job PASSED [ 44%]
-tests/final/test_jobs.py::test_run_pipeline_consistency_audit_job PASSED [ 46%]
-tests/final/test_jobs.py::test_job_runs_audit_persisted PASSED          [ 48%]
-tests/final/test_jobs.py::test_invalid_job_raises PASSED                 [ 51%]
-tests/final/test_queries.py::test_latest_iso_day_ignores_odd_dates PASSED [ 53%]
-tests/final/test_queries.py::test_each_query_returns_json_serializable_output PASSED [ 55%]
-tests/final/test_queries.py::test_defaults_resolve_from_data PASSED      [ 57%]
-tests/final/test_queries.py::test_ensure_indexes_is_idempotent PASSED    [ 59%]
-tests/final/test_queries.py::test_drop_final_indexes_never_removes_non_final_index PASSED [ 61%]
-tests/final/test_queries.py::test_unknown_query_raises_query_not_found PASSED [ 63%]
-tests/final/test_queries.py::test_empty_collection_returns_gracefully PASSED [ 65%]
-tests/final/test_views.py::test_materialized_views_full_refresh PASSED    [ 67%]
-tests/final/test_views.py::test_materialized_views_incremental_noop PASSED [ 69%]
-tests/final/test_views.py::test_get_daily_sales_view PASSED              [ 71%]
-tests/final/test_views.py::test_get_top_products_view PASSED             [ 73%]
-tests/test_classification.py::test_classification_valid PASSED           [ 75%]
-tests/test_classification.py::test_classification_corrected PASSED       [ 77%]
-tests/test_classification.py::test_classification_quarantine_missing_order_id PASSED [ 79%]
-tests/test_classification.py::test_classification_quarantine_missing_customer_id PASSED [ 81%]
-tests/test_classification.py::test_classification_quarantine_corrupted_json PASSED [ 83%]
-tests/test_classification.py::test_classification_quarantine_invalid_date PASSED [ 85%]
-tests/test_cleaning_rules.py::test_rule_1_arabic_digits PASSED           [ 87%]
-tests/test_cleaning_rules.py::test_rule_2_thousands_separators PASSED    [ 89%]
-tests/test_cleaning_rules.py::test_rule_3_strip_currency_text PASSED     [ 91%]
-tests/test_cleaning_rules.py::test_rule_4_arabic_words PASSED            [ 93%]
-tests/test_cleaning_rules.py::test_rule_5_negative_values PASSED         [ 95%]
-tests/test_cleaning_rules.py::test_rule_6_currency_normalization PASSED  [ 97%]
+tests/final/test_api.py::test_api_dashboard_endpoint PASSED              [ 42%]
+tests/final/test_jobs.py::test_list_registered_jobs PASSED               [ 44%]
+tests/final/test_jobs.py::test_run_refresh_materialized_views_job PASSED [ 46%]
+tests/final/test_jobs.py::test_run_pipeline_consistency_audit_job PASSED [ 48%]
+tests/final/test_jobs.py::test_job_runs_audit_persisted PASSED          [ 50%]
+tests/final/test_jobs.py::test_invalid_job_raises PASSED                 [ 52%]
+tests/final/test_queries.py::test_latest_iso_day_ignores_odd_dates PASSED [ 54%]
+tests/final/test_queries.py::test_each_query_returns_json_serializable_output PASSED [ 56%]
+tests/final/test_queries.py::test_defaults_resolve_from_data PASSED      [ 58%]
+tests/final/test_queries.py::test_ensure_indexes_is_idempotent PASSED    [ 60%]
+tests/final/test_queries.py::test_drop_final_indexes_never_removes_non_final_index PASSED [ 62%]
+tests/final/test_queries.py::test_unknown_query_raises_query_not_found PASSED [ 64%]
+tests/final/test_queries.py::test_empty_collection_returns_gracefully PASSED [ 66%]
+tests/final/test_views.py::test_materialized_views_full_refresh PASSED    [ 68%]
+tests/final/test_views.py::test_materialized_views_incremental_noop PASSED [ 70%]
+tests/final/test_views.py::test_get_daily_sales_view PASSED              [ 72%]
+tests/final/test_views.py::test_get_top_products_view PASSED             [ 74%]
+tests/test_classification.py::test_classification_valid PASSED           [ 76%]
+tests/test_classification.py::test_classification_corrected PASSED       [ 78%]
+tests/test_classification.py::test_classification_quarantine_missing_order_id PASSED [ 80%]
+tests/test_classification.py::test_classification_quarantine_missing_customer_id PASSED [ 82%]
+tests/test_classification.py::test_classification_quarantine_corrupted_json PASSED [ 84%]
+tests/test_classification.py::test_classification_quarantine_invalid_date PASSED [ 86%]
+tests/test_cleaning_rules.py::test_rule_1_arabic_digits PASSED           [ 88%]
+tests/test_cleaning_rules.py::test_rule_2_thousands_separators PASSED    [ 90%]
+tests/test_cleaning_rules.py::test_rule_3_strip_currency_text PASSED     [ 92%]
+tests/test_cleaning_rules.py::test_rule_4_arabic_words PASSED            [ 94%]
+tests/test_cleaning_rules.py::test_rule_5_negative_values PASSED         [ 96%]
+tests/test_cleaning_rules.py::test_rule_6_currency_normalization PASSED  [ 98%]
 tests/test_cleaning_rules.py::test_rule_7_status_normalization PASSED    [100%]
 
-============================= 49 passed in 7.85s ==============================
+============================= 50 passed in 5.60s ==============================
 ```
 
-Each of the 9 quality rules, quarantine branches, analytical queries, aggregation reports, materialized views, APScheduler jobs, and all 10 FastAPI endpoints has dedicated automated tests, guaranteeing 100% regression-free stability across unseen datasets.
+Each of the 9 quality rules, quarantine branches, analytical queries, aggregation reports, materialized views, APScheduler jobs, and all FastAPI endpoints has dedicated automated tests, guaranteeing 100% regression-free stability across unseen datasets.
 
 
 ---
