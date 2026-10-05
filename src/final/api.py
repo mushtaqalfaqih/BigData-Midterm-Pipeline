@@ -23,6 +23,7 @@ from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from config.settings import (
@@ -120,6 +121,16 @@ class IngestRequest(BaseModel):
         description="If True, clears collections before loading. Default False preserves history.",
         json_schema_extra={"example": False},
     )
+
+
+# ============================================================
+# Root Redirect to Swagger Documentation
+# ============================================================
+
+@app.get("/", include_in_schema=False)
+def root_redirect() -> RedirectResponse:
+    """Redirects base URL to interactive Swagger UI documentation."""
+    return RedirectResponse(url="/docs")
 
 
 # ============================================================

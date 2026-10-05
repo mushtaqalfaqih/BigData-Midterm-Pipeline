@@ -54,6 +54,16 @@
 > [!IMPORTANT]
 > **دليل تشغيل وفحص شامل ومباشر لتقييم جميع متطلبات المشروع (المرحلة الأولى والثانية) عملياً في أقل من دقيقتين:**
 
+### ⚡ أمر الفحص الشامل الموحّد بنقرة واحدة (One-Click Master Verification)
+
+تشغيل وفحص جميع مكونات المشروع الستة وإثبات مطابقة المعايير في خطوة واحدة خلال 15 ثانية:
+
+```powershell
+python verify_all.py
+```
+
+---
+
 ### 1️⃣ تثبيت المتطلبات وفحص حزمة الاختبارات المؤتمتة
 
 49/49 اختبار ناجح بنسبة 100%
@@ -708,9 +718,10 @@ BigData-Midterm-Pipeline/
 ├── reports/
 │   ├── results.json              # Standardized 15-KPI execution report with mathematical consistency proof
 │   └── results.md                # Human-readable execution summary & rule trigger distributions
-├── screenshots/                  # Live runtime verification (MongoDB Compass, Spark Web UI port 4040)
-│   ├── mongodb/
-│   └── spark/
+├── screenshots/                  # Live runtime verification (Compass, Spark UI, FastAPI Swagger)
+│   ├── mongodb/                  # MongoDB Compass collection allocations & unique indexes
+│   ├── spark/                    # Apache Spark Web UI parallel stages (port 4040)
+│   └── api/                      # FastAPI interactive OpenAPI / Swagger UI (port 8000)
 ├── src/                          # ─── CORE PIPELINE ENGINE (PHASE 1: MIDTERM - 18 PTS) ───
 │   ├── __init__.py
 │   ├── main.py                   # Master CLI entry point supporting dynamic --file-path & --no-reset
@@ -746,7 +757,12 @@ BigData-Midterm-Pipeline/
 │       ├── test_views.py         # Incremental partition refresh & full refresh logic
 │       ├── test_jobs.py          # Scheduler initialization & immediate run logging to job_runs
 │       └── test_api.py           # FastAPI TestClient endpoint integration tests (10/10 routes)
+├── .github/                      # CI/CD Automated Workflow definitions
+│   └── workflows/ci.yml          # GitHub Actions automated tests & invariant verification
+├── docker-compose.yml            # Multi-service container stack (MongoDB 6.0 + Mongo Express UI)
+├── verify_all.py                 # One-click master evaluation runner (runs all 6 suites in ~15s)
 ├── requirements.txt              # Production dependency specifications
+├── LICENSE                       # MIT Open-Source License
 └── README.md                     # Interactive, enterprise-grade project documentation
 ```
 

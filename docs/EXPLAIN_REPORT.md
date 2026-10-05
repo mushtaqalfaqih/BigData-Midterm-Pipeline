@@ -7,27 +7,27 @@ This report provides empirical `explain("executionStats")` benchmarks on the dev
 | Query | Metric | Before Index | After Index | Improvement / Impact |
 | :--- | :--- | :---: | :---: | :---: |
 | **customer_orders** | Stage Chain | `COLLSCAN > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_customer_date` |
-| | Execution Time | **7 ms** | **0 ms** | **7.0x faster** |
+| | Execution Time | **10 ms** | **1 ms** | **10.0x faster** |
 | | Docs Examined | 9,408 | 1 | **9,408.0x reduction** |
 | | Keys Examined | 0 | 1 | Exact B-Tree lookup |
 | | Blocking SORT | Yes ⚠️ | No ✅ | Eliminated ✅ |
 | | | | | |
 | **orders_by_status_period** | Stage Chain | `COLLSCAN > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_status_date` |
-| | Execution Time | **9 ms** | **2 ms** | **4.5x faster** |
+| | Execution Time | **12 ms** | **3 ms** | **4.0x faster** |
 | | Docs Examined | 9,408 | 20 | **470.4x reduction** |
 | | Keys Examined | 0 | 20 | Exact B-Tree lookup |
 | | Blocking SORT | Yes ⚠️ | No ✅ | Eliminated ✅ |
 | | | | | |
 | **corrected_orders_by_rule** | Stage Chain | `IXSCAN > FETCH > SORT > PROJECTION_DEFAULT` | `IXSCAN > FETCH > SORT > PROJECTION_DEFAULT` | Index: `idx_final_correction_rule` |
-| | Execution Time | **12 ms** | **6 ms** | **2.0x faster** |
-| | Docs Examined | 1,478 | 501 | **2.95x reduction** |
-| | Keys Examined | 1,478 | 501 | Exact B-Tree lookup |
+| | Execution Time | **8 ms** | **14 ms** | **0.57x faster** |
+| | Docs Examined | 1,349 | 501 | **2.69x reduction** |
+| | Keys Examined | 1,349 | 501 | Exact B-Tree lookup |
 | | Blocking SORT | Yes ⚠️ | Yes ⚠️ | N/A |
 | | | | | |
 | **high_value_orders** | Stage Chain | N/A (Baseline) | `IXSCAN > FETCH > PROJECTION_DEFAULT > LIMIT` | Index: `idx_final_order_date` |
 | | Execution Time | N/A | **1 ms** | Sub-second with $expr |
-| | Docs Examined | N/A | 240 | Evaluated post-IXSCAN |
-| | Keys Examined | N/A | 240 | Date bound narrowing |
+| | Docs Examined | N/A | 168 | Evaluated post-IXSCAN |
+| | Keys Examined | N/A | 168 | Date bound narrowing |
 | | Blocking SORT | N/A | No ✅ | Direct index scan |
 
 ## 2. In-Depth Analysis per Index
