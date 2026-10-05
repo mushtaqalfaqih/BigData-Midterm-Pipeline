@@ -164,13 +164,13 @@ Together, *"pure transform + idempotent upsert"* is the standard substitute for 
 
 ## 🧭 Key Engineering Decisions & Trade-offs
 
-| Decision | Rationale | Alternative Considered | Why Rejected |
-| :--- | :--- | :--- | :--- |
-| **ELT, not ETL** | Raw fidelity for audit/compliance; transforms are replayable against `orders_raw` | Transform-in-flight (ETL) | Loses forensic trail; a bad rule can silently corrupt data with no recovery path |
-| **Dual-engine routing at 200 MB** | Spark's JVM/cluster cold-start overhead only amortizes past a certain file size; small files are faster as a single-process stream | Always use Spark | Wasteful cold-start latency dominates runtime on small/sample files (see the 2.93 s batch run below) |
-| **MongoDB over an RDBMS** | `items` is a variable-shape JSON array (semi-structured); native horizontal sharding path for future scale | PostgreSQL + JSONB | Viable, but sacrifices Mongo's simpler shard-key-based horizontal scale-out for this workload shape |
-| **Upsert vs. distributed lock/2PC** | Unique index on `order_id` + upsert gives idempotency without coordination overhead | Two-phase commit / distributed lock manager | Would cap write throughput well below the sustained ~3.5K rows/sec target |
-| **Quarantine, not reject** | Every unrepairable record is preserved with a diagnostic code | Drop invalid rows | Violates the zero-data-loss guarantee and destroys the audit trail |
+| ✅ Decision & Rationale | ❌ Alternative Considered & Why Rejected |
+| :--- | :--- |
+| **ELT, not ETL**<br>Raw fidelity for audit/compliance; transforms are replayable against `orders_raw` | **Transform-in-flight (ETL)**<br>Loses forensic trail; a bad rule can silently corrupt data with no recovery path |
+| **Dual-engine routing at 200 MB**<br>Spark's JVM/cluster cold-start overhead only amortizes past a certain file size; small files are faster as a single-process stream | **Always use Spark**<br>Wasteful cold-start latency dominates runtime on small/sample files (see the 2.93 s batch run below) |
+| **MongoDB over an RDBMS**<br>`items` is a variable-shape JSON array (semi-structured); native horizontal sharding path for future scale | **PostgreSQL + JSONB**<br>Viable, but sacrifices Mongo's simpler shard-key-based horizontal scale-out for this workload shape |
+| **Upsert vs. distributed lock/2PC**<br>Unique index on `order_id` + upsert gives idempotency without coordination overhead | **Two-phase commit / distributed lock manager**<br>Would cap write throughput well below the sustained ~3.5K rows/sec target |
+| **Quarantine, not reject**<br>Every unrepairable record is preserved with a diagnostic code | **Drop invalid rows**<br>Violates the zero-data-loss guarantee and destroys the audit trail |
 
 ---
 
@@ -188,43 +188,73 @@ flowchart TD
     classDef err fill:#881337,stroke:#F43F5E,stroke-width:2px,color:#FFF1F2;
     classDef obs fill:#0C4A6E,stroke:#0EA5E9,stroke-width:2px,color:#F0F9FF;
 
-    CSV[("📁 Raw Dirty CSV Dataset<br>(orders_huge_mixed_quality.csv - 12.65 GB)")]:::input
-    ROUTER{"⚡ File Router & Engine Discovery<br>(Size Threshold: 200 MB)"}:::router
+    subgraph EL["📥 Extract & Load"]
+        CSV[("📁 Raw Dirty CSV Dataset<br>(orders_huge_mixed_quality.csv - 12.65 GB)")]:::input
+        ROUTER{"⚡ File Router & Engine Discovery<br>(Size Threshold: 200 MB)"}:::router
+        PB["🐍 Python Streaming Loader<br>(Memory bounded, BATCH_SIZE=1000)"]:::engine
+        PS["🔥 PySpark Distributed Engine<br>(foreachPartition parallel Mongo write)"]:::engine
+        CKPT[("💾 Checkpoint Store<br>(recoverable partition offsets)")]:::storage
+        RAW[("🗄️ MongoDB: orders_raw<br>(100% Ingested with metadata & run_id)")]:::storage
+    end
 
+    subgraph TF["🧪 Transform & Classify"]
+        TRANS["⚙️ Transformation & Quality Engine<br>(8 Rules + Audit Trail Generator)"]:::process
+        CLASS{"🎯 Quality Classification"}:::process
+        VAL1(["VALID"]):::valid
+        VAL2(["CORRECTED"]):::warn
+        QUAR(["QUARANTINE"]):::err
+        UPSERT["🔒 Idempotent Upsert<br>(Unique Index on order_id)"]:::process
+    end
+
+    subgraph ST["🗂️ Curated Collections"]
+        MVAL[("✅ MongoDB: orders_validated<br>(Clean business records)")]:::valid
+        MQUAR[("⛔ MongoDB: orders_quarantine<br>(Audited failure codes)")]:::err
+    end
+
+    subgraph OB["🔭 Observability"]
+        MONITOR["📡 Observability Hooks<br>(throughput, error-rate, rule-trigger signals)"]:::obs
+        METRICS["📊 Metrics & Consistency Verification<br>(reports/results.json & results.md)"]:::storage
+    end
+
+    %% Flows
     CSV --> ROUTER
-
-    ROUTER -->|Size <= 200 MB| PB["🐍 Python Streaming Loader<br>(Memory bounded, BATCH_SIZE=1000)"]:::engine
-    ROUTER -->|Size > 200 MB| PS["🔥 PySpark Distributed Engine<br>(foreachPartition parallel Mongo write)"]:::engine
-
-    PS -.checkpoint state.-> CKPT[("💾 Checkpoint Store<br>(recoverable partition offsets)")]:::storage
-
-    PB --> RAW[("🗄️ MongoDB: orders_raw<br>(100% Ingested with metadata & run_id)")]:::storage
+    ROUTER -->|Size <= 200 MB| PB
+    ROUTER -->|Size > 200 MB| PS
+    PS -. checkpoint state .-> CKPT
+    PB --> RAW
     PS --> RAW
-
-    RAW --> TRANS["⚙️ Transformation & Quality Engine<br>(8 Rules + Audit Trail Generator)"]:::process
-
-    TRANS --> CLASS{"🎯 Quality Classification"}:::process
-
-    CLASS -->|"Clean (No Fixes)"| VAL1["VALID"]:::valid
-    CLASS -->|"Repaired via Rules"| VAL2["CORRECTED"]:::warn
-    CLASS -->|"Unrepairable Corruptions"| QUAR["QUARANTINE"]:::err
-
-    VAL1 --> UPSERT["🔒 Idempotent Upsert<br>(Unique Index on order_id)"]:::process
+    RAW --> TRANS
+    TRANS --> CLASS
+    CLASS -->|"Clean (No Fixes)"| VAL1
+    CLASS -->|"Repaired via Rules"| VAL2
+    CLASS -->|"Unrepairable Corruptions"| QUAR
+    VAL1 --> UPSERT
     VAL2 --> UPSERT
-
-    UPSERT --> MVAL[("✅ MongoDB: orders_validated<br>(Clean business records)")]:::valid
-    QUAR --> MQUAR[("⛔ MongoDB: orders_quarantine<br>(Audited failure codes)")]:::err
-
-    MQUAR -.manual / CLI reprocess — roadmap.-> ROUTER
-
-    RAW -.-> MONITOR["📡 Observability Hooks<br>(throughput, error-rate, rule-trigger signals)"]:::obs
+    UPSERT --> MVAL
+    QUAR --> MQUAR
+    MQUAR -. manual / CLI reprocess — roadmap .-> ROUTER
+    RAW -.-> MONITOR
     MVAL -.-> MONITOR
     MQUAR -.-> MONITOR
+    MONITOR -.-> METRICS
 
-    MONITOR -.-> METRICS["📊 Metrics & Consistency Verification<br>(reports/results.json & results.md)"]:::storage
+    %% Styling
+    style EL fill:transparent,stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+    style TF fill:transparent,stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+    style ST fill:transparent,stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+    style OB fill:transparent,stroke:#64748B,stroke-width:1.5px,stroke-dasharray:6 4
+
+    linkStyle default stroke:#64748B,stroke-width:2px;
+    linkStyle 1,2 stroke:#6366F1,stroke-width:2.5px;
+    linkStyle 3,15 stroke:#F59E0B,stroke-width:3px;
+    linkStyle 8,11,13 stroke:#34D399,stroke-width:2.5px;
+    linkStyle 9,12 stroke:#F97316,stroke-width:2.5px;
+    linkStyle 10,14 stroke:#F43F5E,stroke-width:2.5px;
+    linkStyle 16,17,18,19 stroke:#0EA5E9,stroke-width:1.5px;
 ```
 
-The dashed edges mark the two extension points the pipeline is designed around: **checkpointed recovery** for the Spark path, and a **reprocessing loop** that lets quarantined records re-enter the pipeline once a fix is deployed (see [Production Hardening Roadmap](#-production-hardening-roadmap)).
+> [!NOTE]
+> The dashed edges mark the two extension points the pipeline is designed around: **checkpointed recovery** for the Spark path, and a **reprocessing loop** that lets quarantined records re-enter the pipeline once a fix is deployed (see [Production Hardening Roadmap](#-production-hardening-roadmap)).
 
 ---
 
